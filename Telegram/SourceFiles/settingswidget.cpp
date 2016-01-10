@@ -163,6 +163,11 @@ SettingsInner::SettingsInner(SettingsWidget *parent) : TWidget(parent)
 , _viewEmojis(this, lang(lng_settings_view_emojis))
 , _stickers(this, lang(lng_stickers_you_have))
 
+, _chatStyle1(this, qsl("chat_style"), 0, lang(lng_settings_chat_style_1), cChatStyle() == 0 ? 1:0)
+, _chatStyle2(this, qsl("chat_style"), 1, lang(lng_settings_chat_style_2), cChatStyle() == 1 ? 1:0)
+, _chatStyle3(this, qsl("chat_style"), 2, lang(lng_settings_chat_style_3), cChatStyle() == 2 ? 1:0)
+, _chatStyle4(this, qsl("chat_style"), 3, lang(lng_settings_chat_style_4), cChatStyle() == 3 ? 1:0)
+
 , _enterSend(this, qsl("send_key"), 0, lang(lng_settings_send_enter), !cCtrlEnter())
 , _ctrlEnterSend(this, qsl("send_key"), 1, lang((cPlatform() == dbipMac || cPlatform() == dbipMacOld) ? lng_settings_send_cmdenter : lng_settings_send_ctrlenter), cCtrlEnter())
 
@@ -280,6 +285,11 @@ SettingsInner::SettingsInner(SettingsWidget *parent) : TWidget(parent)
 	connect(&_replaceEmojis, SIGNAL(changed()), this, SLOT(onReplaceEmojis()));
 	connect(&_viewEmojis, SIGNAL(clicked()), this, SLOT(onViewEmojis()));
 	connect(&_stickers, SIGNAL(clicked()), this, SLOT(onStickers()));
+
+	connect(&_chatStyle1, SIGNAL(changed()), this, SLOT(onChatStyle1()));
+	connect(&_chatStyle2, SIGNAL(changed()), this, SLOT(onChatStyle2()));
+	connect(&_chatStyle3, SIGNAL(changed()), this, SLOT(onChatStyle3()));
+	connect(&_chatStyle4, SIGNAL(changed()), this, SLOT(onChatStyle4()));
 
 	connect(&_enterSend, SIGNAL(changed()), this, SLOT(onEnterSend()));
 	connect(&_ctrlEnterSend, SIGNAL(changed()), this, SLOT(onCtrlEnterSend()));
@@ -529,6 +539,12 @@ void SettingsInner::paintEvent(QPaintEvent *e) {
 
 		top += _replaceEmojis.height() + st::setLittleSkip;
 		top += _stickers.height() + st::setSectionSkip;
+
+		top += _chatStyle1.height() + st::setLittleSkip;
+		top += _chatStyle2.height() + st::setLittleSkip;
+		top += _chatStyle3.height() + st::setLittleSkip;
+		top += _chatStyle4.height() + st::setSectionSkip;
+
 		top += _enterSend.height() + st::setLittleSkip;
 		top += _ctrlEnterSend.height() + st::setSectionSkip;
 
@@ -722,6 +738,12 @@ void SettingsInner::resizeEvent(QResizeEvent *e) {
 		_viewEmojis.move(_left + st::setWidth - _viewEmojis.width(), top + st::cbDefFlat.textTop);
 		_replaceEmojis.move(_left, top); top += _replaceEmojis.height() + st::setLittleSkip;
 		_stickers.move(_left + st::cbDefFlat.textLeft, top); top += _stickers.height() + st::setSectionSkip;
+
+		_chatStyle1.move(_left, top); top += _chatStyle1.height() + st::setLittleSkip;
+		_chatStyle2.move(_left, top); top += _chatStyle2.height() + st::setLittleSkip;
+		_chatStyle3.move(_left, top); top += _chatStyle3.height() + st::setLittleSkip;
+		_chatStyle4.move(_left, top); top += _chatStyle4.height() + st::setSectionSkip;
+
 		_enterSend.move(_left, top); top += _enterSend.height() + st::setLittleSkip;
 		_ctrlEnterSend.move(_left, top); top += _ctrlEnterSend.height() + st::setSectionSkip;
 		_dontAskDownloadPath.move(_left, top); top += _dontAskDownloadPath.height();
@@ -1054,6 +1076,12 @@ void SettingsInner::showAll() {
 			_viewEmojis.hide();
 		}
 		_stickers.show();
+
+		_chatStyle1.show();
+		_chatStyle2.show();
+		_chatStyle3.show();
+		_chatStyle4.show();
+
 		_enterSend.show();
 		_ctrlEnterSend.show();
 		_dontAskDownloadPath.show();
@@ -1073,6 +1101,12 @@ void SettingsInner::showAll() {
 		_replaceEmojis.hide();
 		_viewEmojis.hide();
 		_stickers.hide();
+
+		_chatStyle1.hide();
+		_chatStyle2.hide();
+		_chatStyle3.hide();
+		_chatStyle4.hide();
+
 		_enterSend.hide();
 		_ctrlEnterSend.hide();
 		_dontAskDownloadPath.hide();
@@ -1542,6 +1576,52 @@ void SettingsInner::onViewEmojis() {
 
 void SettingsInner::onStickers() {
 	Ui::showLayer(new StickersBox());
+}
+
+void SettingsInner::onChatStyle1() {
+	if (_chatStyle1.checked()) {
+		if (cChatStyle() != 0) {
+			cSetChatStyle(0);
+			Local::writeUserSettings();
+			ChatStyleRestart();
+		}
+	}
+}
+
+void SettingsInner::onChatStyle2() {
+	if (_chatStyle2.checked()) {
+		if (cChatStyle() != 1) {
+			cSetChatStyle(1);
+			Local::writeUserSettings();
+			ChatStyleRestart();
+		}
+	}
+}
+
+void SettingsInner::onChatStyle3() {
+	if (_chatStyle3.checked()) {
+		if (cChatStyle() != 2) {
+			cSetChatStyle(2);
+			Local::writeUserSettings();
+			ChatStyleRestart();
+		}
+	}
+}
+
+void SettingsInner::onChatStyle4() {
+	if (_chatStyle4.checked()) {
+		if (cChatStyle() != 3) {
+			cSetChatStyle(3);
+			Local::writeUserSettings();
+			ChatStyleRestart();
+		}
+	}
+}
+
+void SettingsInner::ChatStyleRestart() {
+	ConfirmBox *box = new ConfirmBox(lang(lng_settings_need_restart), lang(lng_settings_restart_now), st::defaultBoxButton, lang(lng_settings_restart_later));
+	connect(box, SIGNAL(confirmed()), this, SLOT(onRestartNow()));
+	Ui::showLayer(box);
 }
 
 void SettingsInner::onEnterSend() {

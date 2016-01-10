@@ -315,12 +315,21 @@ enum DataBlockId {
 	dbiShowingSavedGifs     = 0x36,
 	dbiAutoPlay             = 0x37,
 
+	dbiChatStyle 		= 0x55,
+
 	dbiEncryptedWithSalt    = 333,
 	dbiEncrypted            = 444,
 
 	// 500-600 reserved
 
 	dbiVersion              = 666,
+};
+
+enum DBIChatStyle {
+	dbicstyle1 = 0,
+	dbicstyle2 = 1,
+	dbicstyle3 = 2,
+	dbicstyle4 = 3,
 };
 
 enum DBISendKey {

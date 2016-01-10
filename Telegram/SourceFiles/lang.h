@@ -22,6 +22,7 @@ Copyright (c) 2014-2015 John Preston, https://desktop.telegram.org
 
 static const char *LanguageCodes[] = {
 	"en",
+	"ru",
 	"it",
 	"es",
 	"de",

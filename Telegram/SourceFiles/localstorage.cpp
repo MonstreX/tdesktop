@@ -1095,6 +1095,13 @@ namespace {
 			if (!_checkStreamStatus(stream)) return false;
 		} break;
 
+		case dbiChatStyle: {
+			qint32 v;
+			stream >> v;
+			if (!_checkStreamStatus(stream)) return false;
+			cSetChatStyle(v == 1);
+		} break;
+
 		case dbiSendKey: {
 			qint32 v;
 			stream >> v;
@@ -1504,6 +1511,7 @@ namespace {
 		size += sizeof(quint32) + 3 * sizeof(qint32);
 
 		EncryptedDescriptor data(size);
+		data.stream << quint32(dbiChatStyle) << qint32(cChatStyle());	
 		data.stream << quint32(dbiSendKey) << qint32(cCtrlEnter() ? dbiskCtrlEnter : dbiskEnter);
 		data.stream << quint32(dbiTileBackground) << qint32(cTileBackground() ? 1 : 0);
 		data.stream << quint32(dbiAutoLock) << qint32(cAutoLock());

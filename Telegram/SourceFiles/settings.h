@@ -95,6 +95,9 @@ DeclareSetting(QString, DialogHelperPath);
 inline const QString &cDialogHelperPathFinal() {
 	return cDialogHelperPath().isEmpty() ? cExeDir() : cDialogHelperPath();
 }
+
+DeclareSetting(int32, ChatStyle);
+
 DeclareSetting(bool, CtrlEnter);
 
 typedef QPixmap *QPixmapPointer;
