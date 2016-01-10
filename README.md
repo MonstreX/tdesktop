@@ -2,8 +2,8 @@
 
 Modified official telegram client with some additional features.
 
-1) New styles for chats like OS X Desktop and so on.
-2) Inluded Russian language unofficial pack.
+* New styles for chats like OS X Desktop and so on.
+* Inluded Russian language unofficial pack.
 
 [//]: # (LINKS)
 [telegram]: https://telegram.org
