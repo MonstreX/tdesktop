@@ -1004,8 +1004,8 @@ msgPhotoRadius: 15px;
 msgOSXMaxWidth: 650px;
 msgOSXPhotoSize: 30px;
 msgOSXPhotoSkip: 40px;
-msgOSXPhotoTop: 7px;
-msgOSXPadding: margins(13px, 7px, 13px, 8px);
+msgOSXPhotoTop: 10px;
+msgOSXPadding: margins(103px, 7px, 13px, 8px);
 msgOSXMargin: margins(13px, 4px, 153px, 4px);
 
 
@@ -1024,7 +1024,7 @@ msgDateFont: font(13px);
 msgMinWidth: 190px;
 msgPhotoSize: 30px;
 msgPhotoSkip: 40px;
-msgPadding: margins(13px, 7px, 13px, 8px);
+msgPadding: margins(13px, 3px, 103px, 5px);
 msgMargin: margins(13px, 4px, 53px, 4px);
 msgLnkPadding: 2px; // for media open / save links
 msgBorder: #f0f0f0;

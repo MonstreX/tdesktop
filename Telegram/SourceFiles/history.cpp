@@ -35,6 +35,7 @@ Copyright (c) 2014-2015 John Preston, https://desktop.telegram.org
 #include "localstorage.h"
 
 namespace {
+
 	TextParseOptions _historySrvOptions = {
 		TextParseLinks | TextParseMentions | TextParseHashtags | TextParseMultiline | TextParseRichText, // flags
 		0, // maxw
@@ -66,12 +67,13 @@ namespace {
 		Qt::LayoutDirectionAuto, // dir
 	};
 
+
 	inline void _initTextOptions() {
 		_historySrvOptions.dir = _textNameOptions.dir = _textDlgOptions.dir = cLangDir();
 		_textDlgOptions.maxw = st::dlgMaxWidth * 2;
-		_webpageTitleOptions.maxw = (cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth) - st::msgPadding.left() - st::msgPadding.right() - st::webPageLeft;
+		_webpageTitleOptions.maxw = msgMaxWidth() - msgPadding().left() - msgPadding().right() - st::webPageLeft;
 		_webpageTitleOptions.maxh = st::webPageTitleFont->height * 2;
-		_webpageDescriptionOptions.maxw = (cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth) - st::msgPadding.left() - st::msgPadding.right() - st::webPageLeft;
+		_webpageDescriptionOptions.maxw = msgMaxWidth() - msgPadding().left() - msgPadding().right() - st::webPageLeft;
 		_webpageDescriptionOptions.maxh = st::webPageDescriptionFont->height * 3;
 	}
 
@@ -93,7 +95,26 @@ namespace {
 	inline const TextParseOptions &itemTextNoMonoOptions(const HistoryItem *item) {
 		return itemTextNoMonoOptions(item->history(), item->from());
 	}
+
 }
+
+//Some new functions to get style vars
+int32 msgMaxWidth() {
+	return cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth;
+}
+int32 msgPhotoSize() {
+	return cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize;
+}
+int32 msgPhotoSkip() {
+	return cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+}
+style::margins msgMargin() {
+	return cChatStyle() == 0? st::msgMargin : st::msgOSXMargin;
+}
+style::margins msgPadding() {
+	return cChatStyle() == 0? st::msgPadding : st::msgOSXPadding;
+}
+
 
 void historyInit() {
 	_initTextOptions();
@@ -6209,8 +6230,7 @@ void HistoryMessage::initDimensions() {
 
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
-	int32 mwidth = qMax(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
-	mwidth = st::msgOSXMaxWidth;
+	int32 mwidth = cChatStyle() == 0? qMin(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw) : st::msgOSXMaxWidth;
 
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
@@ -6227,6 +6247,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 	}
 
 	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
+	//width = _history->width - msgPadding().left() - st::msgMargin.right();
 	if (width > mwidth) {
 		if (!fromChannel() && out() && cChatStyle() == 0) {
 			left += width - mwidth;

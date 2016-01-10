@@ -21,12 +21,19 @@ Copyright (c) 2014-2015 John Preston, https://desktop.telegram.org
 #pragma once
 
 void historyInit();
+//Some new functions to get style vars
+int32 msgMaxWidth();
+int32 msgPhotoSize();
+int32 msgPhotoSkip();
+style::margins msgMargin();
+style::margins msgPadding();
 
 class HistoryItem;
 
 typedef QMap<int32, HistoryItem*> SelectedItemSet;
 
 #include "structs.h"
+
 
 enum NewMessageType {
 	NewMessageUnread,
@@ -1996,6 +2003,9 @@ public:
 	virtual UserData *viaBot() const {
 		return via() ? via()->bot : 0;
 	}
+
+
+
 
 	int32 plainMaxWidth() const;
 	void countPositionAndSize(int32 &left, int32 &width) const;
