@@ -6209,12 +6209,12 @@ void HistoryMessage::initDimensions() {
 
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
-	int32 mwidth = qMin(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
+	int32 mwidth = qMax(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
+
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
 	}
 
-	//left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
 	if (cChatStyle() == 0) {
 		left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
 	} else {
@@ -6225,10 +6225,6 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 		left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
 	}
 
-	// if (displayFromPhoto() || cChatStyle() == 1) {
-	// 	left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
-	// }
-
 	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
 	if (width > mwidth) {
 		if (!fromChannel() && out() && cChatStyle() == 0) {
@@ -6237,32 +6233,6 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 		width = mwidth;
 	}
 
-
-
-	// int32 mwidth = qMin(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
-
-	// if (_media && _media->currentWidth() < mwidth) {
-	// 	mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
-	// }
-
-	// if (cChatStyle() == 0) {
-	// 	left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
-	// 	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
-	// } else if (cChatStyle() == 1) {
-	// 	left = st::msgOSXMargin.left();
-	// 	width = _history->width - st::msgOSXMargin.left() - st::msgOSXMargin.right();
-	// }
-
-	// if (displayFromPhoto() || cChatStyle() == 1) {
-	// 	left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
-	// }
-
-	// if (width > mwidth && cChatStyle() == 0) {
-	// 	if (!fromChannel() && out() && cChatStyle() == 0) {
-	// 		left += width - mwidth;
-	// 	}
-	// 	width = mwidth;
-	// }
 
 }
 
