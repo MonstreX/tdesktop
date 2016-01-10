@@ -220,7 +220,7 @@ QPixmap _prepareFrame(const ClipFrameRequest &request, const QImage &original, b
 			}
 		}
 		if (request.rounded) {
-			imageRound(cache);
+			imageRound(cache,1);
 		}
 		return QPixmap::fromImage(cache, Qt::ColorOnly);
 	}

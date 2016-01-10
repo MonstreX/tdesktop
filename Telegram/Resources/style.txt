@@ -999,6 +999,14 @@ historyToEndSkip: 10px;
 activeFadeInDuration: 500;
 activeFadeOutDuration: 3000;
 
+/* STRAT Extra new parameters */
+msgPhotoRadius: 15px;
+msgOSXMaxWidth: 630px;
+
+
+/* END Extra new parameters */
+
+
 msgRadius: 3px;
 
 msgMaxWidth: 430px;
