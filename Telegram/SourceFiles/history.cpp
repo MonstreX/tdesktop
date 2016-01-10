@@ -6243,7 +6243,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 	}
 
 	if (displayFromPhoto() || cChatStyle() != 0) {
-		left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+		left += msgPhotoSkip();
 	}
 
 	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
@@ -6511,7 +6511,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 
 	if (displayFromPhoto() || cChatStyle() == 1) {
 		if (cChatStyle() == 0) { // Default Style
-		  p.drawPixmap(left - st::msgPhotoSkip, _height - st::msgMargin.bottom() - st::msgPhotoSize, _from->photo->pixRounded(st::msgPhotoSize));
+		  p.drawPixmap(left - msgPhotoSkip(), _height - st::msgMargin.bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
 		} else { // OSX Style
 			p.drawPixmap(left - st::msgOSXPhotoSkip, st::msgOSXPhotoTop, _from->photo->pixRounded(st::msgOSXPhotoSize,st::msgOSXPhotoSize,2));
 		}
@@ -6697,7 +6697,7 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	int32 left = 0, width = 0;
 	countPositionAndSize(left, width);
 	if (displayFromPhoto()) {
-		if (x >= left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) && x < left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) + (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize) && y >= _height - st::msgMargin.bottom() - (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize) && y < _height - st::msgMargin.bottom()) {
+		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - st::msgMargin.bottom() - msgPhotoSize() && y < _height - st::msgMargin.bottom()) {
 			lnk = _from->lnk;
 			return;
 		}
@@ -6954,7 +6954,7 @@ void HistoryForwarded::getState(TextLinkPtr &lnk, HistoryCursorState &state, int
 		int32 left = 0, width = 0;
 		countPositionAndSize(left, width);
 		if (displayFromPhoto()) {
-			if (x >= left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) && x < left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) + (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize)) {
+			if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize()) {
 				return HistoryMessage::getState(lnk, state, x, y);
 			}
 		}
@@ -7274,7 +7274,7 @@ void HistoryReply::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32 x
 		int32 left = 0, width = 0;
 		countPositionAndSize(left, width);
 		if (displayFromPhoto()) { // from user left photo
-			if (x >= left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) && x < left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) + (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize)) {
+			if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize()) {
 				return HistoryMessage::getState(lnk, state, x, y);
 			}
 		}
