@@ -3827,7 +3827,7 @@ void HistoryAudio::initDimensions(const HistoryItem *parent) {
 	_maxw = qMax(_maxw, tleft + audioMaxStatusWidth(_data) + int(st::mediaUnreadSkip + st::mediaUnreadSize) + parent->skipBlockWidth() + st::msgPadding.right());
 
 	_maxw = qMax(tleft + st::semiboldFont->width(lang(lng_media_audio)) + tright, _maxw);
-	_maxw = qMin(_maxw, int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth));
+	_maxw = qMin(_maxw, int(msgMaxWidth()));
 
 	_height = _minh = st::msgFilePadding.top() + st::msgFileSize + st::msgFilePadding.bottom();
 }
@@ -4059,7 +4059,7 @@ void HistoryDocument::initDimensions(const HistoryItem *parent) {
 	}
 
 	_maxw = qMax(tleft + _namew + tright, _maxw);
-	_maxw = qMin(_maxw, int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth));
+	_maxw = qMin(_maxw, int(msgMaxWidth()));
 
 	if (wthumb) {
 		_minh = st::msgFileThumbPadding.top() + st::msgFileThumbSize + st::msgFileThumbPadding.bottom();
@@ -4971,7 +4971,7 @@ void HistoryContact::initDimensions(const HistoryItem *parent) {
 	}
 
 	_maxw = qMax(tleft + _name.maxWidth() + tright, _maxw);
-	_maxw = qMin(_maxw, int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth));
+	_maxw = qMin(_maxw, int(msgMaxWidth()));
 
 	if (_userId) {
 		_minh = st::msgFileThumbPadding.top() + st::msgFileThumbSize + st::msgFileThumbPadding.bottom();
@@ -6230,7 +6230,7 @@ void HistoryMessage::initDimensions() {
 
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
-	int32 mwidth = cChatStyle() == 0? qMin(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw) : st::msgOSXMaxWidth;
+	int32 mwidth = cChatStyle() == 0? qMin(int(msgMaxWidth()), _maxw) : st::msgOSXMaxWidth;
 
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
@@ -6611,8 +6611,8 @@ int32 HistoryMessage::resize(int32 width) {
 	width -= st::msgMargin.left() + st::msgMargin.right();
 	if (width < st::msgPadding.left() + st::msgPadding.right() + 1) {
 		width = st::msgPadding.left() + st::msgPadding.right() + 1;
-	} else if (width > (cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth)) {
-		width = (cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth);
+	} else if (width > (msgMaxWidth())) {
+		width = msgMaxWidth();
 	}
 	if (drawBubble()) {
 		bool media = (_media && _media->isDisplayed());
