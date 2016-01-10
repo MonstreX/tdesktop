@@ -1,6 +1,6 @@
 # [Telegram *Classic* Desktop][telegram_desktop] – Unofficial *Classic* Version
 
-Modifyed official telegram cient with some adittional features.
+Modified official telegram client with some additional features.
 
 [//]: # (LINKS)
 [telegram]: https://telegram.org
