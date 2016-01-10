@@ -376,8 +376,7 @@ void imageRound(QImage &img, int32 rounded) {
 	img.setDevicePixelRatio(cRetinaFactor());
 	img = img.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
-	//QImage **masks = rounded != 2? App::cornersMask() : App::cornersMask2();
-	QImage **masks = App::cornersMask();
+	QImage **masks = rounded != 2? App::cornersMask() : App::cornersMask2(); // For two styles of rounded corners 1-default, 2-second type
 
 	int32 w = masks[0]->width(), h = masks[0]->height();
 	int32 tw = img.width(), th = img.height();
