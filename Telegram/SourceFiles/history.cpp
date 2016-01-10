@@ -6210,6 +6210,7 @@ void HistoryMessage::initDimensions() {
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
 	int32 mwidth = qMax(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
+	mwidth = st::msgOSXMaxWidth;
 
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
