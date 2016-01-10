@@ -6214,10 +6214,20 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
 	}
 
-	left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
-	if (displayFromPhoto()) {
-		left += st::msgPhotoSkip;
+	//left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
+	if (cChatStyle() == 0) {
+		left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
+	} else {
+		left = st::msgOSXMargin.left();
 	}
+
+	if (displayFromPhoto() || cChatStyle() != 0) {
+		left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+	}
+
+	// if (displayFromPhoto() || cChatStyle() == 1) {
+	// 	left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+	// }
 
 	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
 	if (width > mwidth) {
