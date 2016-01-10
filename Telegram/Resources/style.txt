@@ -1005,8 +1005,8 @@ msgOSXMaxWidth: 650px;
 msgOSXPhotoSize: 30px;
 msgOSXPhotoSkip: 40px;
 msgOSXPhotoTop: 10px;
-msgOSXPadding: margins(103px, 7px, 13px, 8px);
-msgOSXMargin: margins(13px, 4px, 153px, 4px);
+msgOSXPadding: margins(13px, 3px, 103px, 5px);
+msgOSXMargin: margins(13px, 4px, 53px, 4px);
 
 
 /* END Extra new parameters */

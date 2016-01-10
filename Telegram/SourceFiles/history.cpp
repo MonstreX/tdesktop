@@ -6237,7 +6237,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 	}
 
 	if (cChatStyle() == 0) {
-		left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
+		left = (!fromChannel() && out()) ? msgMargin().right() : msgMargin().left();
 	} else {
 		left = st::msgOSXMargin.left();
 	}
@@ -6246,8 +6246,8 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 		left += msgPhotoSkip();
 	}
 
-	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
-	//width = _history->width - msgPadding().left() - st::msgMargin.right();
+	width = _history->width - msgMargin().left() - msgMargin().right();
+	//width = _history->width - msgPadding().left() - msgMargin().right();
 	if (width > mwidth) {
 		if (!fromChannel() && out() && cChatStyle() == 0) {
 			left += width - mwidth;
@@ -6511,7 +6511,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 
 	if (displayFromPhoto() || cChatStyle() == 1) {
 		if (cChatStyle() == 0) { // Default Style
-		  p.drawPixmap(left - msgPhotoSkip(), _height - st::msgMargin.bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
+		  p.drawPixmap(left - msgPhotoSkip(), _height - msgMargin().bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
 		} else { // OSX Style
 			p.drawPixmap(left - st::msgOSXPhotoSkip, st::msgOSXPhotoTop, _from->photo->pixRounded(st::msgOSXPhotoSize,st::msgOSXPhotoSize,2));
 		}
@@ -6526,7 +6526,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (width < 1) return;
 
 	if (bubble) {
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
 
 		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (outbg ? st::msgOutBg : st::msgInBg));
@@ -6563,7 +6563,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 
 		if (_media && _media->isDisplayed()) {
 			p.save();
-			int32 top = _height - st::msgMargin.bottom() - _media->height();
+			int32 top = _height - msgMargin().bottom() - _media->height();
 			p.translate(left, top);
 			_media->draw(p, this, r.translated(-left, -top), selected, ms);
 			p.restore();
@@ -6575,7 +6575,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		}
 	} else {
 		p.save();
-		int32 top = st::msgMargin.top();
+		int32 top = msgMargin().top();
 		p.translate(left, top);
 		_media->draw(p, this, r.translated(-left, -top), selected, ms);
 		p.restore();
@@ -6608,7 +6608,7 @@ void HistoryMessage::destroy() {
 int32 HistoryMessage::resize(int32 width) {
 	if (width < st::msgMinWidth) return _height;
 
-	width -= st::msgMargin.left() + st::msgMargin.right();
+	width -= msgMargin().left() + msgMargin().right();
 	if (width < st::msgPadding.left() + st::msgPadding.right() + 1) {
 		width = st::msgPadding.left() + st::msgPadding.right() + 1;
 	} else if (width > (msgMaxWidth())) {
@@ -6656,7 +6656,7 @@ int32 HistoryMessage::resize(int32 width) {
 	} else {
 		_height = _media->resize(width, this);
 	}
-	_height += st::msgMargin.top() + st::msgMargin.bottom();
+	_height += msgMargin().top() + msgMargin().bottom();
 	return _height;
 }
 
@@ -6666,10 +6666,10 @@ bool HistoryMessage::hasPoint(int32 x, int32 y) const {
 	if (width < 1) return false;
 
 	if (drawBubble()) {
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		return r.contains(x, y);
 	} else {
-		return _media->hasPoint(x - left, y - st::msgMargin.top(), this);
+		return _media->hasPoint(x - left, y - msgMargin().top(), this);
 	}
 }
 
@@ -6697,7 +6697,7 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	int32 left = 0, width = 0;
 	countPositionAndSize(left, width);
 	if (displayFromPhoto()) {
-		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - st::msgMargin.bottom() - msgPhotoSize() && y < _height - st::msgMargin.bottom()) {
+		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - msgMargin().bottom() - msgPhotoSize() && y < _height - msgMargin().bottom()) {
 			lnk = _from->lnk;
 			return;
 		}
@@ -6705,7 +6705,7 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	if (width < 1) return;
 
 	if (drawBubble()) {
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName()) { // from user left name
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + st::msgNameFont->height) {
 				if (x >= r.left() + st::msgPadding.left() && x < r.left() + r.width() - st::msgPadding.right() && x < r.left() + st::msgPadding.left() + _from->nameText.maxWidth()) {
@@ -6721,7 +6721,7 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 		}
 		getStateFromMessageText(lnk, state, x, y, r);
 	} else {
-		_media->getState(lnk, state, x - left, y - st::msgMargin.top(), this);
+		_media->getState(lnk, state, x - left, y - msgMargin().top(), this);
 	}
 }
 
@@ -6776,7 +6776,7 @@ void HistoryMessage::getSymbol(uint16 &symbol, bool &after, bool &upon, int32 x,
 		countPositionAndSize(left, width);
 		if (width < 1) return;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName() || cChatStyle != 0) { // from user left name
 			r.setTop(r.top() + st::msgNameFont->height);
 		} else if (via() && !toHistoryForwarded()) {
@@ -6940,7 +6940,7 @@ bool HistoryForwarded::hasPoint(int32 x, int32 y) const {
 		countPositionAndSize(left, width);
 		if (width < 1) return false;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		return r.contains(x, y);
 	}
 	return HistoryMessage::hasPoint(x, y);
@@ -6960,7 +6960,7 @@ void HistoryForwarded::getState(TextLinkPtr &lnk, HistoryCursorState &state, int
 		}
 		if (width < 1) return;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
@@ -7007,7 +7007,7 @@ void HistoryForwarded::getSymbol(uint16 &symbol, bool &after, bool &upon, int32 
 		countPositionAndSize(left, width);
 		if (width < 1) return;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
@@ -7260,7 +7260,7 @@ bool HistoryReply::hasPoint(int32 x, int32 y) const {
 		countPositionAndSize(left, width);
 		if (width < 1) return false;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		return r.contains(x, y);
 	}
 	return HistoryMessage::hasPoint(x, y);
@@ -7280,7 +7280,7 @@ void HistoryReply::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32 x
 		}
 		if (width < 1) return;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
@@ -7320,7 +7320,7 @@ void HistoryReply::getSymbol(uint16 &symbol, bool &after, bool &upon, int32 x, i
 		countPositionAndSize(left, width);
 		if (width < 1) return;
 
-		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
+		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
