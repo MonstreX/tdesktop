@@ -6188,7 +6188,7 @@ void HistoryMessage::initDimensions() {
 			_minh += _media->minHeight();
 		}
 		if (!_media) {
-			if (displayFromName()) {
+			if (displayFromName() || cChatStyle() != 0) {
 				int32 namew = st::msgPadding.left() + _from->nameText.maxWidth() + st::msgPadding.right();
 				if (via() && !toHistoryForwarded()) {
 					namew += st::msgServiceFont->spacew + via()->maxWidth;
@@ -6208,6 +6208,7 @@ void HistoryMessage::initDimensions() {
 }
 
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
+
 	int32 mwidth = qMin(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
@@ -6225,11 +6226,39 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 		}
 		width = mwidth;
 	}
+
+
+
+	// int32 mwidth = qMin(int(cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth), _maxw);
+
+	// if (_media && _media->currentWidth() < mwidth) {
+	// 	mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
+	// }
+
+	// if (cChatStyle() == 0) {
+	// 	left = (!fromChannel() && out()) ? st::msgMargin.right() : st::msgMargin.left();
+	// 	width = _history->width - st::msgMargin.left() - st::msgMargin.right();
+	// } else if (cChatStyle() == 1) {
+	// 	left = st::msgOSXMargin.left();
+	// 	width = _history->width - st::msgOSXMargin.left() - st::msgOSXMargin.right();
+	// }
+
+	// if (displayFromPhoto() || cChatStyle() == 1) {
+	// 	left += cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+	// }
+
+	// if (width > mwidth && cChatStyle() == 0) {
+	// 	if (!fromChannel() && out() && cChatStyle() == 0) {
+	// 		left += width - mwidth;
+	// 	}
+	// 	width = mwidth;
+	// }
+
 }
 
 void HistoryMessage::fromNameUpdated(int32 width) const {
 	_fromVersion = _from->nameVersion;
-	if (drawBubble() && displayFromName()) {
+	if ((drawBubble() && displayFromName()) || (drawBubble() && cChatStyle() != 0)) {
 		if (via() && !toHistoryForwarded()) {
 			via()->resize(width - st::msgPadding.left() - st::msgPadding.right() - _from->nameText.maxWidth() - st::msgServiceFont->spacew);
 		}
@@ -6451,7 +6480,11 @@ void HistoryMessage::setId(MsgId newId) {
 void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 ms) const {
 	bool outbg = out() && !fromChannel(), bubble = drawBubble(), selected = (selection == FullSelection);
 
-	textstyleSet(&(outbg ? st::outTextStyle : st::inTextStyle));
+	if (cChatStyle() == 0) {
+		textstyleSet(&(outbg ? st::outTextStyle : st::inTextStyle));
+	} else {
+		textstyleSet(&(st::inTextStyle));
+	}
 
 	uint64 animms = App::main() ? App::main()->animActiveTimeStart(this) : 0;
 	if (animms > 0 && animms <= ms) {
@@ -6469,6 +6502,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 
 	int32 left = 0, width = 0;
 	countPositionAndSize(left, width);
+
 	if (_from->nameVersion > _fromVersion) {
 		fromNameUpdated(width);
 	}
@@ -6477,7 +6511,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		if (cChatStyle() == 0) { // Default Style
 		  p.drawPixmap(left - st::msgPhotoSkip, _height - st::msgMargin.bottom() - st::msgPhotoSize, _from->photo->pixRounded(st::msgPhotoSize));
 		} else { // OSX Style
-			p.drawPixmap(left - st::msgPhotoSkip, 0, _from->photo->pixRounded(st::msgPhotoSize,st::msgPhotoSize,2));
+			p.drawPixmap(left - st::msgOSXPhotoSkip, st::msgOSXPhotoTop, _from->photo->pixRounded(st::msgOSXPhotoSize,st::msgOSXPhotoSize,2));
 		}
 
 		// QBrush brush(QPixmap("photo.jpg"));
@@ -6492,25 +6526,35 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (bubble) {
 		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
 
+
 		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (outbg ? st::msgOutBg : st::msgInBg));
 		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (outbg ? st::msgOutShadow : st::msgInShadow));
 		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (outbg ? MessageOutCorners : MessageInCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
-		if (displayFromName()) {
+
+		//---------------------- Name DRAW
+		if (displayFromName() || cChatStyle() != 0) {
+			// Font
 			p.setFont(st::msgNameFont);
+			// Color
 			if (fromChannel()) {
 				p.setPen(selected ? st::msgInServiceFgSelected : st::msgInServiceFg);
 			} else {
 				p.setPen(_from->color);
 			}
+
 			_from->nameText.drawElided(p, r.left() + st::msgPadding.left(), r.top() + st::msgPadding.top(), width - st::msgPadding.left() - st::msgPadding.right());
+
 			if (via() && !toHistoryForwarded() && width > st::msgPadding.left() + st::msgPadding.right() + _from->nameText.maxWidth() + st::msgServiceFont->spacew) {
 				p.setPen(selected ? (outbg ? st::msgOutServiceFgSelected : st::msgInServiceFgSelected) : (outbg ? st::msgOutServiceFg : st::msgInServiceFg));
 				p.drawText(r.left() + st::msgPadding.left() + _from->nameText.maxWidth() + st::msgServiceFont->spacew, r.top() + st::msgPadding.top() + st::msgServiceFont->ascent, via()->text);
 			}
+
 			r.setTop(r.top() + st::msgNameFont->height);
 		}
+
+
 
 		QRect trect(r.marginsAdded(-st::msgPadding));
 		drawMessageText(p, trect, selection);
@@ -6540,7 +6584,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 
 void HistoryMessage::drawMessageText(Painter &p, QRect trect, uint32 selection) const {
 	bool outbg = out() && !fromChannel(), selected = (selection == FullSelection);
-	if (!displayFromName() && via() && !toHistoryForwarded()) {
+	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() == 0) {
 		p.setFont(st::msgServiceNameFont);
 		p.setPen(selected ? (outbg ? st::msgOutServiceFgSelected : st::msgInServiceFgSelected) : (outbg ? st::msgOutServiceFg : st::msgInServiceFg));
 		p.drawTextLeft(trect.left(), trect.top(), _history->width, via()->text);
@@ -6592,7 +6636,7 @@ int32 HistoryMessage::resize(int32 width) {
 		int32 l = 0, w = 0;
 		countPositionAndSize(l, w);
 
-		if (displayFromName()) {
+		if (displayFromName() || cChatStyle() != 0) {
 			if (emptyText()) {
 				_height += st::msgPadding.top() + st::msgNameFont->height + st::mediaHeaderSkip;
 			} else {
@@ -6601,7 +6645,7 @@ int32 HistoryMessage::resize(int32 width) {
 			fromNameUpdated(w);
 		} else if (via() && !toHistoryForwarded()) {
 			via()->resize(w - st::msgPadding.left() - st::msgPadding.right());
-			if (emptyText() && !displayFromName()) {
+			if (emptyText() && !displayFromName() && cChatStyle() == 0) {
 				_height += st::msgPadding.top() + st::msgNameFont->height + st::mediaHeaderSkip;
 			} else {
 				_height += st::msgNameFont->height;
@@ -6651,7 +6695,7 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	int32 left = 0, width = 0;
 	countPositionAndSize(left, width);
 	if (displayFromPhoto()) {
-		if (x >= left - st::msgPhotoSkip && x < left - st::msgPhotoSkip + st::msgPhotoSize && y >= _height - st::msgMargin.bottom() - st::msgPhotoSize && y < _height - st::msgMargin.bottom()) {
+		if (x >= left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) && x < left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) + (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize) && y >= _height - st::msgMargin.bottom() - (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize) && y < _height - st::msgMargin.bottom()) {
 			lnk = _from->lnk;
 			return;
 		}
@@ -6684,7 +6728,7 @@ void HistoryMessage::getStateFromMessageText(TextLinkPtr &lnk, HistoryCursorStat
 
 	QRect trect(r.marginsAdded(-st::msgPadding));
 
-	if (!displayFromName() && via() && !toHistoryForwarded()) {
+	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() == 0) {
 		if (x >= trect.left() && y >= trect.top() && y < trect.top() + st::msgNameFont->height && x < trect.left() + via()->width) {
 			lnk = via()->lnk;
 			return;
@@ -6731,7 +6775,7 @@ void HistoryMessage::getSymbol(uint16 &symbol, bool &after, bool &upon, int32 x,
 		if (width < 1) return;
 
 		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
-		if (displayFromName()) { // from user left name
+		if (displayFromName() || cChatStyle != 0) { // from user left name
 			r.setTop(r.top() + st::msgNameFont->height);
 		} else if (via() && !toHistoryForwarded()) {
 			r.setTop(r.top() + st::msgNameFont->height);
@@ -6875,7 +6919,7 @@ int32 HistoryForwarded::resize(int32 width) {
 	HistoryMessage::resize(width);
 	if (drawBubble()) {
 		if (displayForwardedFrom()) {
-			if (emptyText() && !displayFromName()) {
+			if (emptyText() && !displayFromName() && cChatStyle() == 0) {
 				_height += st::msgPadding.top() + st::msgServiceNameFont->height + st::mediaHeaderSkip;
 			} else {
 				_height += st::msgServiceNameFont->height;
@@ -6908,14 +6952,14 @@ void HistoryForwarded::getState(TextLinkPtr &lnk, HistoryCursorState &state, int
 		int32 left = 0, width = 0;
 		countPositionAndSize(left, width);
 		if (displayFromPhoto()) {
-			if (x >= left - st::msgPhotoSkip && x < left - st::msgPhotoSkip + st::msgPhotoSize) {
+			if (x >= left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) && x < left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) + (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize)) {
 				return HistoryMessage::getState(lnk, state, x, y);
 			}
 		}
 		if (width < 1) return;
 
 		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
-		if (displayFromName()) {
+		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
 				return HistoryMessage::getState(lnk, state, x, y);
@@ -6962,7 +7006,7 @@ void HistoryForwarded::getSymbol(uint16 &symbol, bool &after, bool &upon, int32 
 		if (width < 1) return;
 
 		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
-		if (displayFromName()) {
+		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
 				return HistoryMessage::getSymbol(symbol, after, upon, x, y);
@@ -7186,7 +7230,7 @@ int32 HistoryReply::resize(int32 width) {
 	HistoryMessage::resize(width);
 
 	if (drawBubble()) {
-		if (emptyText() && !displayFromName() && !via()) {
+		if (emptyText() && !displayFromName() && !via() && cChatStyle() == 0) {
 			_height += st::msgPadding.top() + st::msgReplyPadding.top() + st::msgReplyBarSize.height() + st::msgReplyPadding.bottom() + st::mediaHeaderSkip;
 		} else {
 			_height += st::msgReplyPadding.top() + st::msgReplyBarSize.height() + st::msgReplyPadding.bottom();
@@ -7228,14 +7272,14 @@ void HistoryReply::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32 x
 		int32 left = 0, width = 0;
 		countPositionAndSize(left, width);
 		if (displayFromPhoto()) { // from user left photo
-			if (x >= left - st::msgPhotoSkip && x < left - st::msgPhotoSkip + st::msgPhotoSize) {
+			if (x >= left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) && x < left - (cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip) + (cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize)) {
 				return HistoryMessage::getState(lnk, state, x, y);
 			}
 		}
 		if (width < 1) return;
 
 		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
-		if (displayFromName()) {
+		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
 				return HistoryMessage::getState(lnk, state, x, y);
@@ -7275,7 +7319,7 @@ void HistoryReply::getSymbol(uint16 &symbol, bool &after, bool &upon, int32 x, i
 		if (width < 1) return;
 
 		QRect r(left, st::msgMargin.top(), width, _height - st::msgMargin.top() - st::msgMargin.bottom());
-		if (displayFromName()) {
+		if (displayFromName() || cChatStyle() != 0) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + st::msgPadding.top() && y < r.top() + st::msgPadding.top() + nameFont->height) {
 				return HistoryMessage::getSymbol(symbol, after, upon, x, y);
