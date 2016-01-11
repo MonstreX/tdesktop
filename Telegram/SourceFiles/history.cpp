@@ -99,20 +99,52 @@ namespace {
 }
 
 //Some new functions to get style vars
+//msgMinWidth
+//
+//
+//
+int32 msgMinWidth() {
+  switch (cChatStyle()) {
+  case 0: return st::msgMinWidth;
+  case 2: return st::msgSKPMinWidth;
+  default: return st::msgMinWidth;
+  }
+}
+
 int32 msgMaxWidth() {
-	return cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth;
+  switch (cChatStyle()) {
+  case 0: return st::msgMaxWidth;
+  case 1: return st::msgOSXMaxWidth;
+  case 2: return st::msgSKPMaxWidth;
+  default: return st::msgMaxWidth;
+  }
 }
 int32 msgPhotoSize() {
 	return cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize;
 }
 int32 msgPhotoSkip() {
-	return cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+  switch (cChatStyle()) {
+  case 0: return st::msgMaxWidth;
+  case 1: return st::msgOSXPhotoSkip;
+  case 2: return st::msgSKPPhotoSkip;
+  default: return st::msgPhotoSkip;
+  }
 }
 style::margins msgMargin() {
-	return cChatStyle() == 0? st::msgMargin : st::msgOSXMargin;
+  switch (cChatStyle()) {
+  case 0: return st::msgMargin;
+  case 1: return st::msgOSXMargin;
+  case 2: return st::msgSKPMargin;
+  default: return st::msgMargin;
+  }
 }
 style::margins msgPadding() {
-	return cChatStyle() == 0? st::msgPadding : st::msgOSXPadding;
+  switch (cChatStyle()) {
+  case 0: return st::msgPadding;
+  case 1: return st::msgOSXPadding;
+  case 2: return st::msgSKPPadding;
+  default: return st::msgPadding;
+  }
 }
 
 
@@ -5116,8 +5148,8 @@ HistoryWebPage::HistoryWebPage(WebPageData *data) : HistoryMedia()
 , _openl(0)
 , _attach(0)
 , _asArticle(false)
-, _title(st::msgMinWidth - st::webPageLeft)
-, _description(st::msgMinWidth - st::webPageLeft)
+, _title(msgMinWidth() - st::webPageLeft)
+, _description(msgMinWidth() - st::webPageLeft)
 , _siteNameWidth(0)
 , _durationWidth(0)
 , _pixw(0)
@@ -5758,8 +5790,8 @@ void ImageLinkData::load() {
 }
 
 HistoryImageLink::HistoryImageLink(const QString &url, const QString &title, const QString &description) : HistoryMedia(),
-_title(st::msgMinWidth),
-_description(st::msgMinWidth) {
+_title(msgMinWidth()),
+_description(msgMinWidth()) {
 	if (!title.isEmpty()) {
 		_title.setText(st::webPageTitleFont, textClean(title), _webpageTitleOptions);
 	}
@@ -6023,7 +6055,7 @@ void HistoryMessageVia::resize(int32 availw) {
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, const MTPDmessage &msg) :
 	HistoryItem(history, block, msg.vid.v, msg.vflags.v, ::date(msg.vdate), msg.has_from_id() ? msg.vfrom_id.v : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via(msg.has_via_bot_id() ? new HistoryMessageVia(msg.vvia_bot_id.v) : 0)
@@ -6037,7 +6069,7 @@ HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, const MTPD
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, MsgId msgId, int32 flags, int32 viaBotId, QDateTime date, int32 from, const QString &msg, const EntitiesInText &entities, HistoryMedia *fromMedia) :
 HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_id) ? from : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via((flags & MTPDmessage::flag_via_bot_id) ? new HistoryMessageVia(viaBotId) : 0)
@@ -6053,7 +6085,7 @@ HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, MsgId msgId, int32 flags, int32 viaBotId, QDateTime date, int32 from, DocumentData *doc, const QString &caption) :
 HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_id) ? from : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via((flags & MTPDmessage::flag_via_bot_id) ? new HistoryMessageVia(viaBotId) : 0)
@@ -6066,7 +6098,7 @@ HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, MsgId msgId, int32 flags, int32 viaBotId, QDateTime date, int32 from, PhotoData *photo, const QString &caption) :
 HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_id) ? from : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via((flags & MTPDmessage::flag_via_bot_id) ? new HistoryMessageVia(viaBotId) : 0)
@@ -6230,7 +6262,7 @@ void HistoryMessage::initDimensions() {
 
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
-	int32 mwidth = cChatStyle() == 0? qMin(int(msgMaxWidth()), _maxw) : st::msgOSXMaxWidth;
+	int32 mwidth = cChatStyle() == 0? qMin(int(msgMaxWidth()), _maxw) : msgMaxWidth();
 
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
@@ -6239,7 +6271,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 	if (cChatStyle() == 0) {
 		left = (!fromChannel() && out()) ? msgMargin().right() : msgMargin().left();
 	} else {
-		left = st::msgOSXMargin.left();
+		left = msgMargin().left();
 	}
 
 	if (displayFromPhoto() || cChatStyle() != 0) {
@@ -6516,17 +6548,12 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		fromNameUpdated(width);
 	}
 
-	if (displayFromPhoto() || cChatStyle() == 1) {
+	if ((displayFromPhoto() || cChatStyle() == 1) && cChatStyle() < 2) {
 		if (cChatStyle() == 0) { // Default Style
 		  p.drawPixmap(left - msgPhotoSkip(), _height - msgMargin().bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
 		} else { // OSX Style
 			p.drawPixmap(left - st::msgOSXPhotoSkip, st::msgOSXPhotoTop, _from->photo->pixRounded(st::msgOSXPhotoSize,st::msgOSXPhotoSize,2));
 		}
-
-		// QBrush brush(QPixmap("photo.jpg"));
-  	// 	p.setBrush(brush);
-		// QRect r(0,0, 32, 32);
-		// p.drawRoundedRect(r, 15, 15);
 
 
 	}
@@ -6535,9 +6562,13 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (bubble) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
-		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
-		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
-		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
+		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
+		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
+		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageInCorners));
+
+		// style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
+		// style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
+		// RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
 		//---------------------- Name DRAW
@@ -6613,7 +6644,7 @@ void HistoryMessage::destroy() {
 }
 
 int32 HistoryMessage::resize(int32 width) {
-	if (width < st::msgMinWidth) return _height;
+	if (width < msgMinWidth()) return _height;
 
 	width -= msgMargin().left() + msgMargin().right();
 	if (width < msgPadding().left() + msgPadding().right() + 1) {
@@ -7500,7 +7531,7 @@ void HistoryServiceMsg::setMessageByAction(const MTPmessageAction &action) {
 
 HistoryServiceMsg::HistoryServiceMsg(History *history, HistoryBlock *block, const MTPDmessageService &msg) :
 	HistoryItem(history, block, msg.vid.v, msg.vflags.v, ::date(msg.vdate), msg.has_from_id() ? msg.vfrom_id.v : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _media(0)
 {
 	setMessageByAction(msg.vaction);

@@ -1066,7 +1066,7 @@ LayoutOverviewLink::LayoutOverviewLink(HistoryMedia *media, HistoryItem *parent)
 , _page(0)
 , _pixw(0)
 , _pixh(0)
-, _text(st::msgMinWidth) {
+, _text(cChatStyle() != 2? st::msgMinWidth : st::msgSKPMinWidth) {
 	QString text = _parent->originalText();
 	EntitiesInText entities = _parent->originalEntities();
 

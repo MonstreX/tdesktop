@@ -293,7 +293,7 @@ void UserData::setBotInfo(const MTPBotInfo &info) {
 		QString desc = qs(d.vdescription);
 		if (botInfo->description != desc) {
 			botInfo->description = desc;
-			botInfo->text = Text(st::msgMinWidth);
+			botInfo->text = Text(cChatStyle() != 2? st::msgMinWidth : st::msgSKPMinWidth);
 		}
 		botInfo->shareText = qs(d.vshare_text);
 
