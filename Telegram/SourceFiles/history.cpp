@@ -6742,7 +6742,8 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	int32 left = 0, width = 0;
 	countPositionAndSize(left, width);
 	if (displayFromPhoto()) {
-		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - msgMargin().bottom() - msgPhotoSize() && y < _height - msgMargin().bottom()) {
+		//if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - msgMargin().bottom() - msgPhotoSize() && y < _height - msgMargin().bottom()) {
+		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= st::msgOSXPhotoTop && y < msgPhotoSize() + st::msgOSXPhotoTop) {
 			lnk = _from->lnk;
 			return;
 		}
@@ -6752,8 +6753,9 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	if (drawBubble()) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 		if (displayFromName()) { // from user left name
+
 			if (y >= r.top() + msgPadding().top() && y < r.top() + msgPadding().top() + st::msgNameFont->height) {
-				if (x >= r.left() + msgPadding().left() && x < r.left() + r.width() - msgPadding().right() && x < r.left() + msgPadding().left() + _from->nameText.maxWidth()) {
+				if (x >= r.left() + msgPadding().left() && x < r.left() + r.width() - msgPadding().right() && x < r.left() + msgPadding().left() + _from->nameText.maxWidth() ) {
 					lnk = _from->lnk;
 					return;
 				}
