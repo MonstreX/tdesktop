@@ -1005,10 +1005,11 @@ msgOSXMaxWidth: 650px;
 msgOSXPhotoSize: 30px;
 msgOSXPhotoSkip: 40px;
 msgOSXPhotoTop: 10px;
-msgOSXPadding: margins(13px, 3px, 103px, 5px);
-msgOSXMargin: margins(13px, 4px, 53px, 4px);
+msgOSXMargin: margins(30px, 4px, 53px, 4px);
+msgOSXPadding: margins(3px, 2px, 80px, 2px);
 
 
+msgOSXDateDelta: point(15px, 3px);
 /* END Extra new parameters */
 
 
@@ -1024,7 +1025,7 @@ msgDateFont: font(13px);
 msgMinWidth: 190px;
 msgPhotoSize: 30px;
 msgPhotoSkip: 40px;
-msgPadding: margins(13px, 3px, 103px, 5px);
+msgPadding: margins(13px, 3px, 13px, 5px);
 msgMargin: margins(13px, 4px, 53px, 4px);
 msgLnkPadding: 2px; // for media open / save links
 msgBorder: #f0f0f0;
@@ -1071,6 +1072,7 @@ msgSkip: 40px;
 msgPtr: 8px;
 msgBG: ':/gui/art/bg.jpg';
 msgBG0: ':/gui/art/bg0.png';
+msgBG1: ':/gui/art/bg1.jpg';
 
 msgCheckPos: point(3px, 1px);
 msgSendingImg: sprite(260px, 20px, 20px, 20px);

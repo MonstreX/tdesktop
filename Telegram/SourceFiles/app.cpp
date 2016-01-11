@@ -2138,6 +2138,8 @@ namespace App {
 		prepareCorners(MessageInSelectedCorners, st::msgRadius, st::msgInBgSelected, &st::msgInShadowSelected);
 		prepareCorners(MessageOutCorners, st::msgRadius, st::msgOutBg, &st::msgOutShadow);
 		prepareCorners(MessageOutSelectedCorners, st::msgRadius, st::msgOutBgSelected, &st::msgOutShadowSelected);
+
+		prepareCorners(MessageOSXCorners, st::msgRadius, st::transparent);
 	}
 
 	void clearHistories() {

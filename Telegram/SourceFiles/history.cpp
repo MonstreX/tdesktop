@@ -6378,12 +6378,10 @@ void HistoryMessage::drawInfo(Painter &p, int32 right, int32 bottom, int32 width
 	switch (type) {
 	case InfoDisplayDefault:
 
-		// infoRight -= msgPadding().right() - st::msgDateDelta.x();
-		// infoBottom -= msgPadding().bottom() - st::msgDateDelta.y();
-		infoRight -= msgPadding().right() - st::msgDateDelta.x();
-		//infoBottom = msgPadding().bottom() + st::msgDateDelta.y();
-
+		infoRight -= cChatStyle() == 0? msgPadding().right() - st::msgDateDelta.x() : st::msgOSXDateDelta.x();
+		infoBottom -= cChatStyle() == 0? msgPadding().bottom() - st::msgDateDelta.y() : msgPadding().bottom() - st::msgOSXDateDelta.y();
 		p.setPen((selected ? (outbg ? st::msgOutDateFgSelected : st::msgInDateFgSelected) : (outbg ? st::msgOutDateFg : st::msgInDateFg))->p);
+
 	break;
 	case InfoDisplayOverImage:
 		infoRight -= st::msgDateImgDelta + st::msgDateImgPadding.x();
@@ -6395,13 +6393,14 @@ void HistoryMessage::drawInfo(Painter &p, int32 right, int32 bottom, int32 width
 	int32 infoW = HistoryMessage::infoWidth();
 	if (rtl()) infoRight = width - infoRight + infoW;
 
-	int32 dateX = infoRight - infoW;
-	//int32 dateY = infoBottom - st::msgDateFont->height;
-	int32 dateY = infoBottom;
+	int32 dateX = infoRight - (cChatStyle() == 0? infoW : _timeWidth);
+	int32 dateY = infoBottom - st::msgDateFont->height;
+
 	if (type == InfoDisplayOverImage) {
 		int32 dateW = infoW + 2 * st::msgDateImgPadding.x(), dateH = st::msgDateFont->height + 2 * st::msgDateImgPadding.y();
 		App::roundRect(p, dateX - st::msgDateImgPadding.x(), dateY - st::msgDateImgPadding.y(), dateW, dateH, selected ? st::msgDateImgBgSelected : st::msgDateImgBg, selected ? DateSelectedCorners : DateCorners);
 	}
+
 	dateX += HistoryMessage::timeLeft();
 
 	p.drawText(dateX, dateY + st::msgDateFont->ascent, _timeText);
@@ -6431,8 +6430,10 @@ void HistoryMessage::drawInfo(Painter &p, int32 right, int32 bottom, int32 width
 		iconRect = &(overimg ? st::msgInvSendingViewsImg : st::msgSendingViewsImg);
 		p.drawPixmap(iconPos, App::sprite(), *iconRect);
 	}
+
 	if (out() && !fromChannel()) {
-		iconPos = QPoint(infoRight - st::msgCheckImg.pxWidth() + st::msgCheckPos.x(), infoBottom - st::msgCheckImg.pxHeight() + st::msgCheckPos.y());
+		iconPos = QPoint(infoRight - (cChatStyle() == 0? 0 : _timeWidth + 10) - st::msgCheckImg.pxWidth() + st::msgCheckPos.x(), infoBottom - st::msgCheckImg.pxHeight() + st::msgCheckPos.y());
+
 		if (id > 0) {
 			if (unread()) {
 				iconRect = &(overimg ? st::msgInvCheckImg : (selected ? st::msgSelectCheckImg : st::msgCheckImg));
@@ -6484,6 +6485,7 @@ void HistoryMessage::setId(MsgId newId) {
 	}
 }
 
+// Chat Out
 void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 ms) const {
 	bool outbg = out() && !fromChannel(), bubble = drawBubble(), selected = (selection == FullSelection);
 
@@ -6533,9 +6535,9 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (bubble) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
-		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (outbg ? st::msgOutBg : st::msgInBg));
-		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (outbg ? st::msgOutShadow : st::msgInShadow));
-		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (outbg ? MessageOutCorners : MessageInCorners));
+		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
+		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
+		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
 		//---------------------- Name DRAW
@@ -6576,7 +6578,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		} else {
 			// Draw Time & Checks
 			//HistoryMessage::drawInfo(p, r.x() + r.width(), r.y() + r.height(), 2 * r.x() + r.width(), selected, InfoDisplayDefault);
-			HistoryMessage::drawInfo(p, r.x() + r.width(), r.y(), 2 * r.x() + r.width(), selected, InfoDisplayDefault);
+			HistoryMessage::drawInfo(p, r.x() + r.width(), cChatStyle() == 0? r.y() + r.height() : r.y(), 2 * r.x() + r.width(), selected, InfoDisplayDefault);
 		}
 	} else {
 		p.save();
