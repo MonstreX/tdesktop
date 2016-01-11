@@ -6263,7 +6263,7 @@ void HistoryMessage::initDimensions() {
 
 void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
-	int32 mwidth = cChatStyle() == 0? qMin(int(msgMaxWidth()), _maxw) : st::msgOSXMaxWidth;
+	int32 mwidth = cChatStyle() == 0? qMin(int(msgMaxWidth()), _maxw) : msgMaxWidth();
 
 	if (_media && _media->currentWidth() < mwidth) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
@@ -6272,7 +6272,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 	if (cChatStyle() == 0) {
 		left = (!fromChannel() && out()) ? msgMargin().right() : msgMargin().left();
 	} else {
-		left = st::msgOSXMargin.left();
+		left = msgMargin().left();
 	}
 
 	if (displayFromPhoto() || cChatStyle() != 0) {

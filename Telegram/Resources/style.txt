@@ -1010,11 +1010,11 @@ msgOSXMargin: margins(30px, 4px, 53px, 4px);
 msgOSXPadding: margins(3px, 2px, 80px, 2px);
 msgOSXDateDelta: point(15px, 3px);
 
-msgSKPMaxWidth: 650px;
-msgSKPMinWidth: 190px;
+msgSKPMaxWidth: 750px;
+msgSKPMinWidth: 50px;
 msgSKPPhotoSize: 30px;
 msgSKPPhotoSkip: 40px;
-msgSKPMargin: margins(30px, 4px, 53px, 4px);
+msgSKPMargin: margins(150px, 4px, 53px, 4px);
 msgSKPPadding: margins(3px, 2px, 80px, 2px);
 msgSKPDateDelta: point(15px, 3px);
 
