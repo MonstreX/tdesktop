@@ -5149,8 +5149,8 @@ HistoryWebPage::HistoryWebPage(WebPageData *data) : HistoryMedia()
 , _openl(0)
 , _attach(0)
 , _asArticle(false)
-, _title(st::msgMinWidth - st::webPageLeft)
-, _description(st::msgMinWidth - st::webPageLeft)
+, _title(msgMinWidth() - st::webPageLeft)
+, _description(msgMinWidth() - st::webPageLeft)
 , _siteNameWidth(0)
 , _durationWidth(0)
 , _pixw(0)
@@ -5791,8 +5791,8 @@ void ImageLinkData::load() {
 }
 
 HistoryImageLink::HistoryImageLink(const QString &url, const QString &title, const QString &description) : HistoryMedia(),
-_title(st::msgMinWidth),
-_description(st::msgMinWidth) {
+_title(msgMinWidth()),
+_description(msgMinWidth()) {
 	if (!title.isEmpty()) {
 		_title.setText(st::webPageTitleFont, textClean(title), _webpageTitleOptions);
 	}
@@ -6056,7 +6056,7 @@ void HistoryMessageVia::resize(int32 availw) {
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, const MTPDmessage &msg) :
 	HistoryItem(history, block, msg.vid.v, msg.vflags.v, ::date(msg.vdate), msg.has_from_id() ? msg.vfrom_id.v : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via(msg.has_via_bot_id() ? new HistoryMessageVia(msg.vvia_bot_id.v) : 0)
@@ -6070,7 +6070,7 @@ HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, const MTPD
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, MsgId msgId, int32 flags, int32 viaBotId, QDateTime date, int32 from, const QString &msg, const EntitiesInText &entities, HistoryMedia *fromMedia) :
 HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_id) ? from : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via((flags & MTPDmessage::flag_via_bot_id) ? new HistoryMessageVia(viaBotId) : 0)
@@ -6086,7 +6086,7 @@ HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, MsgId msgId, int32 flags, int32 viaBotId, QDateTime date, int32 from, DocumentData *doc, const QString &caption) :
 HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_id) ? from : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via((flags & MTPDmessage::flag_via_bot_id) ? new HistoryMessageVia(viaBotId) : 0)
@@ -6099,7 +6099,7 @@ HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_
 
 HistoryMessage::HistoryMessage(History *history, HistoryBlock *block, MsgId msgId, int32 flags, int32 viaBotId, QDateTime date, int32 from, PhotoData *photo, const QString &caption) :
 HistoryItem(history, block, msgId, flags, date, (flags & MTPDmessage::flag_from_id) ? from : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _textWidth(0)
 , _textHeight(0)
 , _via((flags & MTPDmessage::flag_via_bot_id) ? new HistoryMessageVia(viaBotId) : 0)
@@ -6648,7 +6648,7 @@ void HistoryMessage::destroy() {
 }
 
 int32 HistoryMessage::resize(int32 width) {
-	if (width < st::msgMinWidth) return _height;
+	if (width < msgMinWidth()) return _height;
 
 	width -= msgMargin().left() + msgMargin().right();
 	if (width < msgPadding().left() + msgPadding().right() + 1) {
@@ -7535,7 +7535,7 @@ void HistoryServiceMsg::setMessageByAction(const MTPmessageAction &action) {
 
 HistoryServiceMsg::HistoryServiceMsg(History *history, HistoryBlock *block, const MTPDmessageService &msg) :
 	HistoryItem(history, block, msg.vid.v, msg.vflags.v, ::date(msg.vdate), msg.has_from_id() ? msg.vfrom_id.v : 0)
-, _text(st::msgMinWidth)
+, _text(msgMinWidth())
 , _media(0)
 {
 	setMessageByAction(msg.vaction);
