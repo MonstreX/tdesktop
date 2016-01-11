@@ -103,7 +103,7 @@ int32 msgMaxWidth() {
 	switch (cChatStyle()) {
 	case 0: return st::msgMaxWidth;
 	case 1: return st::msgOSXMaxWidth;
-	case 2: return st::msgMaxWidth;
+	case 2: return st::msgSKPMaxWidth;
 	default: return st::msgMaxWidth;
 	}
 }
@@ -111,7 +111,7 @@ int32 msgMinWidth() {
 	switch (cChatStyle()) {
 	case 0: return st::msgMinWidth;
 	case 1: return st::msgOSXMinWidth;
-	case 2: return st::msgMinWidth;
+	case 2: return st::msgSKPMinWidth;
 	default: return st::msgMinWidth;
 	}
 }
@@ -119,7 +119,7 @@ int32 msgPhotoSize() {
 	switch (cChatStyle()) {
 	case 0: return st::msgPhotoSize;
 	case 1: return st::msgOSXPhotoSize;
-	case 2: return st::msgPhotoSize;
+	case 2: return st::msgSKPPhotoSize;
 	default: return st::msgPhotoSize;
 	}
 }
@@ -127,7 +127,7 @@ int32 msgPhotoSkip() {
 	switch (cChatStyle()) {
 	case 0: return st::msgPhotoSkip;
 	case 1: return st::msgOSXPhotoSkip;
-	case 2: return st::msgPhotoSkip;
+	case 2: return st::msgSKPPhotoSkip;
 	default: return st::msgPhotoSkip;
 	}
 }
@@ -135,7 +135,7 @@ style::margins msgMargin() {
 	switch (cChatStyle()) {
 	case 0: return st::msgMargin;
 	case 1: return st::msgOSXMargin;
-	case 2: return st::msgMargin;
+	case 2: return st::msgSKPMargin;
 	default: return st::msgMargin;
 	}
 }
@@ -143,7 +143,7 @@ style::margins msgPadding() {
 	switch (cChatStyle()) {
 	case 0: return st::msgPadding;
 	case 1: return st::msgOSXPadding;
-	case 2: return st::msgPadding;
+	case 2: return st::msgSKPPadding;
 	default: return st::msgPadding;
 	}
 }
