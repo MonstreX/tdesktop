@@ -6293,7 +6293,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
 void HistoryMessage::fromNameUpdated(int32 width) const {
 	_fromVersion = _from->nameVersion;
-	if ((drawBubble() && displayFromName()) || (drawBubble() && cChatStyle() != 0)) {
+	if ((drawBubble() && displayFromName()) || (drawBubble()) && cChatStyle() < 2) {
 		if (via() && !toHistoryForwarded()) {
 			via()->resize(width - msgPadding().left() - msgPadding().right() - _from->nameText.maxWidth() - st::msgServiceFont->spacew);
 		}
@@ -6576,7 +6576,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		App::roundRect(p, r, bg, cors, &sh);
 
 		//---------------------- Name DRAW
-		if (displayFromName() || cChatStyle() != 0) {
+		if (displayFromName() || cChatStyle() == 1) {
 			// Font
 			p.setFont(st::msgNameFont);
 			// Color
@@ -6628,7 +6628,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 
 void HistoryMessage::drawMessageText(Painter &p, QRect trect, uint32 selection) const {
 	bool outbg = out() && !fromChannel(), selected = (selection == FullSelection);
-	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() == 0) {
+	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() != 1) {
 		p.setFont(st::msgServiceNameFont);
 		p.setPen(selected ? (outbg ? st::msgOutServiceFgSelected : st::msgInServiceFgSelected) : (outbg ? st::msgOutServiceFg : st::msgInServiceFg));
 		p.drawTextLeft(trect.left(), trect.top(), _history->width, via()->text);
@@ -6680,7 +6680,7 @@ int32 HistoryMessage::resize(int32 width) {
 		int32 l = 0, w = 0;
 		countPositionAndSize(l, w);
 
-		if (displayFromName() || cChatStyle() != 0) {
+		if (displayFromName() || cChatStyle() == 1) {
 			if (emptyText()) {
 				_height += msgPadding().top() + st::msgNameFont->height + st::mediaHeaderSkip;
 			} else {
@@ -6689,7 +6689,7 @@ int32 HistoryMessage::resize(int32 width) {
 			fromNameUpdated(w);
 		} else if (via() && !toHistoryForwarded()) {
 			via()->resize(w - msgPadding().left() - msgPadding().right());
-			if (emptyText() && !displayFromName() && cChatStyle() == 0) {
+			if (emptyText() && !displayFromName() && cChatStyle() != 1) {
 				_height += msgPadding().top() + st::msgNameFont->height + st::mediaHeaderSkip;
 			} else {
 				_height += st::msgNameFont->height;
@@ -6772,7 +6772,7 @@ void HistoryMessage::getStateFromMessageText(TextLinkPtr &lnk, HistoryCursorStat
 
 	QRect trect(r.marginsAdded(-msgPadding()));
 
-	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() == 0) {
+	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() != 1) {
 		if (x >= trect.left() && y >= trect.top() && y < trect.top() + st::msgNameFont->height && x < trect.left() + via()->width) {
 			lnk = via()->lnk;
 			return;
@@ -6963,7 +6963,7 @@ int32 HistoryForwarded::resize(int32 width) {
 	HistoryMessage::resize(width);
 	if (drawBubble()) {
 		if (displayForwardedFrom()) {
-			if (emptyText() && !displayFromName() && cChatStyle() == 0) {
+			if (emptyText() && !displayFromName() && cChatStyle() != 1) {
 				_height += msgPadding().top() + st::msgServiceNameFont->height + st::mediaHeaderSkip;
 			} else {
 				_height += st::msgServiceNameFont->height;
@@ -7274,7 +7274,7 @@ int32 HistoryReply::resize(int32 width) {
 	HistoryMessage::resize(width);
 
 	if (drawBubble()) {
-		if (emptyText() && !displayFromName() && !via() && cChatStyle() == 0) {
+		if (emptyText() && !displayFromName() && !via() && cChatStyle() != 1) {
 			_height += msgPadding().top() + st::msgReplyPadding.top() + st::msgReplyBarSize.height() + st::msgReplyPadding.bottom() + st::mediaHeaderSkip;
 		} else {
 			_height += st::msgReplyPadding.top() + st::msgReplyBarSize.height() + st::msgReplyPadding.bottom();
