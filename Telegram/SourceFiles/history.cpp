@@ -6743,7 +6743,8 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	countPositionAndSize(left, width);
 	if (displayFromPhoto()) {
 		//if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - msgMargin().bottom() - msgPhotoSize() && y < _height - msgMargin().bottom()) {
-		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= st::msgOSXPhotoTop && y < msgPhotoSize() + st::msgOSXPhotoTop) {
+
+		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >=  (cChatStyle() == 1? st::msgOSXPhotoTop : _height - msgMargin().bottom() - msgPhotoSize()) && y < (cChatStyle() == 1? msgPhotoSize() + st::msgOSXPhotoTop : _height - msgMargin().bottom())) {
 			lnk = _from->lnk;
 			return;
 		}
