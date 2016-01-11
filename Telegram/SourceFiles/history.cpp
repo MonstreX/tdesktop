@@ -6549,7 +6549,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		fromNameUpdated(width);
 	}
 
-	if (displayFromPhoto() || cChatStyle() == 1) {
+	if ((displayFromPhoto() || cChatStyle() == 1) && cChatStyle() < 2) {
 		if (cChatStyle() == 0) { // Default Style
 		  p.drawPixmap(left - msgPhotoSkip(), _height - msgMargin().bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
 		} else { // OSX Style
@@ -6680,7 +6680,7 @@ int32 HistoryMessage::resize(int32 width) {
 		int32 l = 0, w = 0;
 		countPositionAndSize(l, w);
 
-		if (displayFromName() || cChatStyle() == 1) {
+		if (displayFromName() || cChatStyle() == 1 || cChatStyle() == 3) {
 			if (emptyText()) {
 				_height += msgPadding().top() + st::msgNameFont->height + st::mediaHeaderSkip;
 			} else {
