@@ -1007,15 +1007,9 @@ msgOSXPhotoSkip: 40px;
 msgOSXPhotoTop: 10px;
 msgOSXMargin: margins(30px, 4px, 53px, 4px);
 msgOSXPadding: margins(3px, 2px, 80px, 2px);
+
+
 msgOSXDateDelta: point(15px, 3px);
-
-msgSKPMaxWidth: 650px;
-msgSKPMinWidth: 50px;
-msgSKPPhotoSkip: 40px;
-msgSKPMargin: margins(103px, 4px, 53px, 4px);
-msgSKPPadding: margins(13px, 2px, 80px, 2px);
-msgSKPDateDelta: point(15px, 3px);
-
 /* END Extra new parameters */
 
 

@@ -322,7 +322,7 @@ private:
 };
 
 struct BotInfo {
-	BotInfo() : inited(false), readsAllHistory(false), cantJoinGroups(false), version(0), text(cChatStyle() != 2? st::msgMinWidth : st::msgSKPMinWidth) {
+	BotInfo() : inited(false), readsAllHistory(false), cantJoinGroups(false), version(0), text(st::msgMinWidth) {
 	}
 	bool inited;
 	bool readsAllHistory, cantJoinGroups;
