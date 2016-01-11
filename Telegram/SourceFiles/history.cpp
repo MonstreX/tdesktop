@@ -6576,7 +6576,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		App::roundRect(p, r, bg, cors, &sh);
 
 		//---------------------- Name DRAW
-		if (displayFromName() || cChatStyle() == 1) {
+		if ((displayFromName() || cChatStyle() == 1)  && cChatStyle() != 2) {
 			// Font
 			p.setFont(st::msgNameFont);
 			// Color
@@ -6680,7 +6680,7 @@ int32 HistoryMessage::resize(int32 width) {
 		int32 l = 0, w = 0;
 		countPositionAndSize(l, w);
 
-		if (displayFromName() || cChatStyle() == 1 || cChatStyle() == 3) {
+		if ((displayFromName() || cChatStyle() == 1 || cChatStyle() == 3) && cChatStyle() != 2) {
 			if (emptyText()) {
 				_height += msgPadding().top() + st::msgNameFont->height + st::mediaHeaderSkip;
 			} else {

@@ -1014,8 +1014,8 @@ msgSKPMaxWidth: 750px;
 msgSKPMinWidth: 50px;
 msgSKPPhotoSize: 30px;
 msgSKPPhotoSkip: 40px;
-msgSKPMargin: margins(150px, 4px, 53px, 4px);
-msgSKPPadding: margins(3px, 2px, 80px, 2px);
+msgSKPMargin: margins(30px, 4px, 53px, 4px);
+msgSKPPadding: margins(130px, 2px, 80px, 2px);
 msgSKPDateDelta: point(15px, 3px);
 
 /* END Extra new parameters */
