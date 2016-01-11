@@ -147,6 +147,14 @@ style::margins msgPadding() {
 	default: return st::msgPadding;
 	}
 }
+style::point msgDateDelta() {
+	switch (cChatStyle()) {
+	case 0: return st::msgDateDelta;
+	case 1: return st::msgOSXDateDelta;
+	case 2: return st::msgSKPDateDelta;
+	default: return st::msgDateDelta;
+	}
+}
 
 
 void historyInit() {
@@ -6411,8 +6419,8 @@ void HistoryMessage::drawInfo(Painter &p, int32 right, int32 bottom, int32 width
 	switch (type) {
 	case InfoDisplayDefault:
 
-		infoRight -= cChatStyle() == 0? msgPadding().right() - st::msgDateDelta.x() : st::msgOSXDateDelta.x();
-		infoBottom -= cChatStyle() == 0? msgPadding().bottom() - st::msgDateDelta.y() : msgPadding().bottom() - st::msgOSXDateDelta.y();
+		infoRight -= cChatStyle() == 0? msgPadding().right() - msgDateDelta().x() : msgDateDelta().x();
+		infoBottom -= msgPadding().bottom() - msgDateDelta().y();
 		p.setPen((selected ? (outbg ? st::msgOutDateFgSelected : st::msgInDateFgSelected) : (outbg ? st::msgOutDateFg : st::msgInDateFg))->p);
 
 	break;
@@ -6548,35 +6556,28 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (_from->nameVersion > _fromVersion) {
 		fromNameUpdated(width);
 	}
-
+	// Photo
 	if ((displayFromPhoto() || cChatStyle() == 1) && cChatStyle() < 2) {
 		if (cChatStyle() == 0) { // Default Style
 		  p.drawPixmap(left - msgPhotoSkip(), _height - msgMargin().bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
 		} else { // OSX Style
 			p.drawPixmap(left - st::msgOSXPhotoSkip, st::msgOSXPhotoTop, _from->photo->pixRounded(st::msgOSXPhotoSize,st::msgOSXPhotoSize,2));
 		}
-
-		// QBrush brush(QPixmap("photo.jpg"));
-  	// 	p.setBrush(brush);
-		// QRect r(0,0, 32, 32);
-		// p.drawRoundedRect(r, 15, 15);
-
-
 	}
 	if (width < 1) return;
 
 	if (bubble) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
-		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
-		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
-		// style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
-		// style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
+		// style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
+		// style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
+		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
+		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
 		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
-		//---------------------- Name DRAW
-		if ((displayFromName() || cChatStyle() == 1)  && cChatStyle() != 2) {
+		//---------------------- Draw NAME
+		if (displayFromName() || cChatStyle() == 1 || cChatStyle() == 2) {
 			// Font
 			p.setFont(st::msgNameFont);
 			// Color
@@ -6586,14 +6587,16 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 				p.setPen(_from->color);
 			}
 
-			_from->nameText.drawElided(p, r.left() + msgPadding().left(), r.top() + msgPadding().top(), width - msgPadding().left() - msgPadding().right());
+			_from->nameText.drawElided(p, r.left() + (cChatStyle() == 2 ? 0 - _from->nameText.maxWidth() - st::msgSKPPhotoSkip : msgPadding().left()), r.top() + msgPadding().top(), width - msgPadding().left() - msgPadding().right());
 
 			if (via() && !toHistoryForwarded() && width > msgPadding().left() + msgPadding().right() + _from->nameText.maxWidth() + st::msgServiceFont->spacew) {
 				p.setPen(selected ? (outbg ? st::msgOutServiceFgSelected : st::msgInServiceFgSelected) : (outbg ? st::msgOutServiceFg : st::msgInServiceFg));
 				p.drawText(r.left() + msgPadding().left() + _from->nameText.maxWidth() + st::msgServiceFont->spacew, r.top() + msgPadding().top() + st::msgServiceFont->ascent, via()->text);
 			}
 
-			r.setTop(r.top() + st::msgNameFont->height);
+			if (cChatStyle() != 2) {
+				r.setTop(r.top() + st::msgNameFont->height);
+			}
 		}
 
 
