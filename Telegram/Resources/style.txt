@@ -1002,6 +1002,7 @@ activeFadeOutDuration: 3000;
 /* STRAT Extra new parameters */
 msgPhotoRadius: 15px;
 msgOSXMaxWidth: 650px;
+msgOSXMinWidth: 190px;
 msgOSXPhotoSize: 30px;
 msgOSXPhotoSkip: 40px;
 msgOSXPhotoTop: 10px;

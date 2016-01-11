@@ -100,19 +100,52 @@ namespace {
 
 //Some new functions to get style vars
 int32 msgMaxWidth() {
-	return cChatStyle() == 0? st::msgMaxWidth : st::msgOSXMaxWidth;
+	switch (cChatStyle()) {
+	case 0: return st::msgMaxWidth;
+	case 1: return st::msgOSXMaxWidth;
+	case 2: return st::msgMaxWidth;
+	default: return st::msgMaxWidth;
+	}
+}
+int32 msgMinWidth() {
+	switch (cChatStyle()) {
+	case 0: return st::msgMinWidth;
+	case 1: return st::msgOSXMinWidth;
+	case 2: return st::msgMinWidth;
+	default: return st::msgMinWidth;
+	}
 }
 int32 msgPhotoSize() {
-	return cChatStyle() == 0? st::msgPhotoSize : st::msgOSXPhotoSize;
+	switch (cChatStyle()) {
+	case 0: return st::msgPhotoSize;
+	case 1: return st::msgOSXPhotoSize;
+	case 2: return st::msgPhotoSize;
+	default: return st::msgPhotoSize;
+	}
 }
 int32 msgPhotoSkip() {
-	return cChatStyle() == 0? st::msgPhotoSkip : st::msgOSXPhotoSkip;
+	switch (cChatStyle()) {
+	case 0: return st::msgPhotoSkip;
+	case 1: return st::msgOSXPhotoSkip;
+	case 2: return st::msgPhotoSkip;
+	default: return st::msgPhotoSkip;
+	}
 }
 style::margins msgMargin() {
-	return cChatStyle() == 0? st::msgMargin : st::msgOSXMargin;
+	switch (cChatStyle()) {
+	case 0: return st::msgMargin;
+	case 1: return st::msgOSXMargin;
+	case 2: return st::msgMargin;
+	default: return st::msgMargin;
+	}
 }
 style::margins msgPadding() {
-	return cChatStyle() == 0? st::msgPadding : st::msgOSXPadding;
+	switch (cChatStyle()) {
+	case 0: return st::msgPadding;
+	case 1: return st::msgOSXPadding;
+	case 2: return st::msgPadding;
+	default: return st::msgPadding;
+	}
 }
 
 
@@ -6535,8 +6568,10 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (bubble) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
-		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
-		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
+		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
+		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
+		// style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
+		// style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
 		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
