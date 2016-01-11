@@ -1099,7 +1099,7 @@ namespace {
 			qint32 v;
 			stream >> v;
 			if (!_checkStreamStatus(stream)) return false;
-			cSetChatStyle(v == 1);
+			cSetChatStyle(v);
 		} break;
 
 		case dbiSendKey: {
