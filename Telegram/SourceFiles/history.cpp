@@ -268,6 +268,7 @@ void DialogRow::paint(Painter &p, int32 w, bool act, bool sel, bool onlyBackgrou
 }
 
 void FakeDialogRow::paint(Painter &p, int32 w, bool act, bool sel, bool onlyBackground) const {
+
 	QRect fullRect(0, 0, w, st::dlgHeight);
 	p.fillRect(fullRect, (act ? st::dlgActiveBG : (sel ? st::dlgHoverBG : st::dlgBG))->b);
 	if (onlyBackground) return;
@@ -6594,9 +6595,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 				p.drawText(r.left() + msgPadding().left() + _from->nameText.maxWidth() + st::msgServiceFont->spacew, r.top() + msgPadding().top() + st::msgServiceFont->ascent, via()->text);
 			}
 
-			if (cChatStyle() != 2) {
-				r.setTop(r.top() + st::msgNameFont->height);
-			}
+			if (cChatStyle() != 2) r.setTop(r.top() + st::msgNameFont->height);
 		}
 
 
@@ -6743,8 +6742,7 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 	countPositionAndSize(left, width);
 	if (displayFromPhoto()) {
 		//if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >= _height - msgMargin().bottom() - msgPhotoSize() && y < _height - msgMargin().bottom()) {
-
-		if (x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >=  (cChatStyle() == 1? st::msgOSXPhotoTop : _height - msgMargin().bottom() - msgPhotoSize()) && y < (cChatStyle() == 1? msgPhotoSize() + st::msgOSXPhotoTop : _height - msgMargin().bottom())) {
+		if (cChatStyle() < 2 && x >= left - msgPhotoSkip() && x < left - msgPhotoSkip() + msgPhotoSize() && y >=  (cChatStyle() == 1? st::msgOSXPhotoTop : _height - msgMargin().bottom() - msgPhotoSize()) && y < (cChatStyle() == 1? msgPhotoSize() + st::msgOSXPhotoTop : _height - msgMargin().bottom())) {
 			lnk = _from->lnk;
 			return;
 		}
@@ -6753,19 +6751,21 @@ void HistoryMessage::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32
 
 	if (drawBubble()) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
-		if (displayFromName()) { // from user left name
+		//QRect r(cChatStyle() == 2? 0 : left, msgMargin().top(), cChatStyle() == 2? width + msgMargin().left() : width, _height - msgMargin().top() - msgMargin().bottom());
+		if (displayFromName() || cChatStyle() == 1) { // from user left name
 
 			if (y >= r.top() + msgPadding().top() && y < r.top() + msgPadding().top() + st::msgNameFont->height) {
-				if (x >= r.left() + msgPadding().left() && x < r.left() + r.width() - msgPadding().right() && x < r.left() + msgPadding().left() + _from->nameText.maxWidth() ) {
-					lnk = _from->lnk;
+				//if (x >= r.left() + msgPadding().left() && x < r.left() + r.width() - msgPadding().right() && x < r.left() + msgPadding().left() + _from->nameText.maxWidth() ) {
+				if (cChatStyle() == 2? (x >= msgMargin().left() - _from->nameText.maxWidth() && x < 0 + msgMargin().left()) : (x >= r.left() + msgPadding().left() && x < r.left() + r.width() - msgPadding().right() && x < r.left() + msgPadding().left() + _from->nameText.maxWidth()) ) {
+					if (cChatStyle() != 1 || displayFromName()) lnk = _from->lnk;
 					return;
 				}
 				if (via() && !toHistoryForwarded() && x >= r.left() + msgPadding().left() + _from->nameText.maxWidth() + st::msgServiceFont->spacew && x < r.left() + msgPadding().left() + _from->nameText.maxWidth() + st::msgServiceFont->spacew + via()->width) {
-					lnk = via()->lnk;
+					if (cChatStyle() != 1 || displayFromName()) lnk = via()->lnk;
 					return;
 				}
 			}
-			r.setTop(r.top() + st::msgNameFont->height);
+			if (cChatStyle() != 2) r.setTop(r.top() + st::msgNameFont->height);
 		}
 		getStateFromMessageText(lnk, state, x, y, r);
 	} else {
