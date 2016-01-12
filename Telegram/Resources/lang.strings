@@ -889,9 +889,9 @@ Copyright (c) 2014-2015 John Preston, https://desktop.telegram.org
 "lng_mac_menu_new_channel" = "New Channel";
 "lng_mac_menu_show" = "Show Telegram";
 
-"lng_settings_chat_style_1" = "Chat style 1";
-"lng_settings_chat_style_2" = "Chat style 2";
-"lng_settings_chat_style_3" = "Chat style 3";
-"lng_settings_chat_style_4" = "Chat style 4";
+"lng_settings_chat_style_1" = "Telegram style";
+"lng_settings_chat_style_2" = "OS X Desktop style";
+"lng_settings_chat_style_3" = "Skype 6.21 style";
+"lng_settings_chat_style_4" = "Classic style";
 
 // Keys finished

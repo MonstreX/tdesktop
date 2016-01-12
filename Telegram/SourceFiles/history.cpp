@@ -6639,7 +6639,7 @@ void HistoryMessage::drawMessageText(Painter &p, QRect trect, uint32 selection) 
 		trect.setY(trect.y() + st::msgServiceNameFont->height);
 	}
 
-	p.setPen(displayFromName()? st::msgColor : st::msgOutColor);
+	p.setPen(displayFromName()? st::msgColor : st::msgColor); // Place to change message's color
 	p.setFont(st::msgFont);
 
 	uint16 selectedFrom = (selection == FullSelection) ? 0 : (selection >> 16) & 0xFFFF;
