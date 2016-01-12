@@ -104,6 +104,7 @@ int32 msgMaxWidth() {
 	case 0: return st::msgMaxWidth;
 	case 1: return st::msgOSXMaxWidth;
 	case 2: return st::msgSKPMaxWidth;
+	case 3: return st::msgICQMaxWidth;
 	default: return st::msgMaxWidth;
 	}
 }
@@ -112,6 +113,7 @@ int32 msgMinWidth() {
 	case 0: return st::msgMinWidth;
 	case 1: return st::msgOSXMinWidth;
 	case 2: return st::msgSKPMinWidth;
+	case 3: return st::msgICQMinWidth;
 	default: return st::msgMinWidth;
 	}
 }
@@ -120,6 +122,7 @@ int32 msgPhotoSize() {
 	case 0: return st::msgPhotoSize;
 	case 1: return st::msgOSXPhotoSize;
 	case 2: return st::msgSKPPhotoSize;
+	case 3: return st::msgICQPhotoSize;
 	default: return st::msgPhotoSize;
 	}
 }
@@ -128,6 +131,7 @@ int32 msgPhotoSkip() {
 	case 0: return st::msgPhotoSkip;
 	case 1: return st::msgOSXPhotoSkip;
 	case 2: return st::msgSKPPhotoSkip;
+	case 3: return st::msgICQPhotoSkip;
 	default: return st::msgPhotoSkip;
 	}
 }
@@ -136,6 +140,7 @@ style::margins msgMargin() {
 	case 0: return st::msgMargin;
 	case 1: return st::msgOSXMargin;
 	case 2: return st::msgSKPMargin;
+	case 3: return st::msgICQMargin;
 	default: return st::msgMargin;
 	}
 }
@@ -144,6 +149,7 @@ style::margins msgPadding() {
 	case 0: return st::msgPadding;
 	case 1: return st::msgOSXPadding;
 	case 2: return st::msgSKPPadding;
+	case 3: return st::msgICQPadding;
 	default: return st::msgPadding;
 	}
 }
@@ -152,6 +158,7 @@ style::point msgDateDelta() {
 	case 0: return st::msgDateDelta;
 	case 1: return st::msgOSXDateDelta;
 	case 2: return st::msgSKPDateDelta;
+	case 3: return st::msgICQDateDelta;
 	default: return st::msgDateDelta;
 	}
 }
@@ -6289,7 +6296,6 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 	}
 
 	width = _history->width - msgMargin().left() - msgMargin().right();
-	//width = _history->width - msgPadding().left() - msgMargin().right();
 	if (width > mwidth) {
 		if (!fromChannel() && out() && cChatStyle() == 0) {
 			left += width - mwidth;
@@ -6420,7 +6426,8 @@ void HistoryMessage::drawInfo(Painter &p, int32 right, int32 bottom, int32 width
 	switch (type) {
 	case InfoDisplayDefault:
 
-		infoRight -= cChatStyle() == 0? msgPadding().right() - msgDateDelta().x() : msgDateDelta().x();
+		infoRight -= cChatStyle() == 0? msgPadding().right() - msgDateDelta().x() : (cChatStyle() == 3? (right - msgDateDelta().x()) : msgDateDelta().x());
+
 		infoBottom -= msgPadding().bottom() - msgDateDelta().y();
 		p.setPen((selected ? (outbg ? st::msgOutDateFgSelected : st::msgInDateFgSelected) : (outbg ? st::msgOutDateFg : st::msgInDateFg))->p);
 
@@ -6565,15 +6572,15 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (bubble) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
-		// !!! style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
-		// !!! style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
+		// style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
+		// style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
 		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
 		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
 		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
 		// !!! ---------------------- Draw NAME
-		if (displayFromName() || cChatStyle() == 1 || cChatStyle() == 2) {
+		if (displayFromName() || cChatStyle() > 0) {
 			// !!! Font
 			p.setFont(cChatStyle() == 2? st::normalFont : st::msgNameFont);
 			// !!! Color

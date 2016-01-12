@@ -1021,6 +1021,13 @@ msgSKPNameFont: normalFont;
 msgSKPNameColor: #999999;
 msgSKPNameFromColor: #3a78d3;
 
+msgICQMaxWidth: 650px;
+msgICQMinWidth: 190px;
+msgICQPhotoSize: 30px;
+msgICQPhotoSkip: 40px;
+msgICQMargin: margins(40px, 2px, 53px, 2px);
+msgICQPadding: margins(3px, 1px, 13px, 1px);
+msgICQDateDelta: point(70px, 3px);
 /* END Extra new parameters */
 
 
