@@ -1014,9 +1014,12 @@ msgSKPMaxWidth: 650px;
 msgSKPMinWidth: 50px;
 msgSKPPhotoSize: 30px;
 msgSKPPhotoSkip: 10px;
-msgSKPMargin: margins(150px, 4px, 53px, 4px);
-msgSKPPadding: margins(3px, 2px, 80px, 2px);
+msgSKPMargin: margins(150px, 3px, 53px, 3px);
+msgSKPPadding: margins(3px, 1px, 80px, 1px);
 msgSKPDateDelta: point(15px, 22px);
+msgSKPNameFont: normalFont;
+msgSKPNameColor: #999999;
+msgSKPNameFromColor: #3a78d3;
 
 /* END Extra new parameters */
 

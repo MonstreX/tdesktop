@@ -6527,15 +6527,11 @@ void HistoryMessage::setId(MsgId newId) {
 	}
 }
 
-// Chat Out
+// !!! Chat Out
 void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 ms) const {
 	bool outbg = out() && !fromChannel(), bubble = drawBubble(), selected = (selection == FullSelection);
-
-	if (cChatStyle() == 0) {
-		textstyleSet(&(outbg ? st::outTextStyle : st::inTextStyle));
-	} else {
-		textstyleSet(&(st::inTextStyle));
-	}
+	//!!!!!
+	textstyleSet(cChatStyle() == 0? &(outbg ? st::outTextStyle : st::inTextStyle) : &(st::inTextStyle));
 
 	uint64 animms = App::main() ? App::main()->animActiveTimeStart(this) : 0;
 	if (animms > 0 && animms <= ms) {
@@ -6550,20 +6546,17 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 			p.setOpacity(o);
 		}
 	}
-
 	int32 left = 0, width = 0;
 	countPositionAndSize(left, width);
-
 	if (_from->nameVersion > _fromVersion) {
 		fromNameUpdated(width);
 	}
 
-
-	// Photo
+	// !!! Photo
 	if ((displayFromPhoto() || cChatStyle() == 1) && cChatStyle() < 2) {
-		if (cChatStyle() == 0) { // Default Style
+		if (cChatStyle() == 0) { // !!! Default Style
 		  p.drawPixmap(left - msgPhotoSkip(), _height - msgMargin().bottom() - msgPhotoSize(), _from->photo->pixRounded(msgPhotoSize()));
-		} else { // OSX Style
+		} else { // !!! OSX Style
 			p.drawPixmap(left - st::msgOSXPhotoSkip, st::msgOSXPhotoTop, _from->photo->pixRounded(st::msgOSXPhotoSize,st::msgOSXPhotoSize,2));
 		}
 	}
@@ -6572,22 +6565,22 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (bubble) {
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
 
-		// style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
-		// style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
+		// !!! style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::msgInBg));
+		// !!! style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::msgInBg)));
 		style::color bg(selected ? (outbg ? st::msgOutBgSelected : st::msgInBgSelected) : (cChatStyle() == 0? (outbg ? st::msgOutBg : st::msgInBg): st::transparent));
 		style::color sh(selected ? (outbg ? st::msgOutShadowSelected : st::msgInShadowSelected) : (cChatStyle() == 0? (outbg ? st::msgOutShadow : st::msgInShadow) : (st::transparent)));
 		RoundCorners cors(selected ? (outbg ? MessageOutSelectedCorners : MessageInSelectedCorners) : (cChatStyle() == 0? (outbg ? MessageOutCorners : MessageInCorners): MessageOSXCorners));
 		App::roundRect(p, r, bg, cors, &sh);
 
-		//---------------------- Draw NAME
+		// !!! ---------------------- Draw NAME
 		if (displayFromName() || cChatStyle() == 1 || cChatStyle() == 2) {
-			// Font
-			p.setFont(st::msgNameFont);
-			// Color
+			// !!! Font
+			p.setFont(cChatStyle() == 2? st::normalFont : st::msgNameFont);
+			// !!! Color
 			if (fromChannel()) {
-				p.setPen(selected ? st::msgInServiceFgSelected : st::msgInServiceFg);
+				p.setPen(selected ? st::msgInServiceFgSelected : st::msgInServiceFg  );
 			} else {
-				p.setPen(_from->color);
+				p.setPen(cChatStyle() == 2? (!displayFromName()? st::msgSKPNameColor : st::msgSKPNameFromColor) : _from->color);
 			}
 
 			_from->nameText.drawElided(p, r.left() + (cChatStyle() == 2 ? 0 - _from->nameText.maxWidth() - st::msgSKPPhotoSkip : msgPadding().left()), r.top() + msgPadding().top(), width - msgPadding().left() - msgPadding().right());

@@ -127,7 +127,7 @@ void PeerData::updateName(const QString &newName, const QString &newNameOrPhone,
 
 	++nameVersion;
 	name = newName;
-	nameText.setText(st::msgNameFont, name, _textNameOptions);
+	nameText.setText(cChatStyle() == 2? st::normalFont : st::msgNameFont, name, _textNameOptions);
 	if (isUser()) {
 		asUser()->username = newUsername;
 		asUser()->setNameOrPhone(newNameOrPhone);
