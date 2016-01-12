@@ -1028,6 +1028,8 @@ msgICQPhotoSkip: 40px;
 msgICQMargin: margins(40px, 2px, 53px, 2px);
 msgICQPadding: margins(3px, 1px, 13px, 1px);
 msgICQDateDelta: point(70px, 3px);
+
+msgOutColor: #4C8849;
 /* END Extra new parameters */
 
 
