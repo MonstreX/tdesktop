@@ -6557,6 +6557,8 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 	if (_from->nameVersion > _fromVersion) {
 		fromNameUpdated(width);
 	}
+
+
 	// Photo
 	if ((displayFromPhoto() || cChatStyle() == 1) && cChatStyle() < 2) {
 		if (cChatStyle() == 0) { // Default Style
@@ -6598,8 +6600,6 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 			if (cChatStyle() != 2) r.setTop(r.top() + st::msgNameFont->height);
 		}
 
-
-
 		QRect trect(r.marginsAdded(-msgPadding()));
 		drawMessageText(p, trect, selection);
 
@@ -6629,6 +6629,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 }
 
 void HistoryMessage::drawMessageText(Painter &p, QRect trect, uint32 selection) const {
+
 	bool outbg = out() && !fromChannel(), selected = (selection == FullSelection);
 	if (!displayFromName() && via() && !toHistoryForwarded() && cChatStyle() != 1) {
 		p.setFont(st::msgServiceNameFont);
@@ -7027,6 +7028,7 @@ void HistoryForwarded::getState(TextLinkPtr &lnk, HistoryCursorState &state, int
 }
 
 void HistoryForwarded::getStateFromMessageText(TextLinkPtr &lnk, HistoryCursorState &state, int32 x, int32 y, const QRect &r) const {
+
 	QRect realr(r);
 	if (drawBubble() && displayForwardedFrom()) {
 		realr.setHeight(r.height() - st::msgServiceNameFont->height);
@@ -7266,7 +7268,7 @@ void HistoryReply::drawReplyTo(Painter &p, int32 x, int32 y, int32 w, bool selec
 		}
 	}
 }
-
+// !!! Reply out + message
 void HistoryReply::drawMessageText(Painter &p, QRect trect, uint32 selection) const {
 	int32 h = st::msgReplyPadding.top() + st::msgReplyBarSize.height() + st::msgReplyPadding.bottom();
 
@@ -7329,7 +7331,7 @@ void HistoryReply::getState(TextLinkPtr &lnk, HistoryCursorState &state, int32 x
 		if (width < 1) return;
 
 		QRect r(left, msgMargin().top(), width, _height - msgMargin().top() - msgMargin().bottom());
-		if (displayFromName() || cChatStyle() != 0) {
+		if ((displayFromName() || cChatStyle() != 0) &&  cChatStyle() != 2) {
 			style::font nameFont(st::msgNameFont);
 			if (y >= r.top() + msgPadding().top() && y < r.top() + msgPadding().top() + nameFont->height) {
 				return HistoryMessage::getState(lnk, state, x, y);
