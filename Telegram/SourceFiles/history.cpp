@@ -6281,7 +6281,7 @@ void HistoryMessage::countPositionAndSize(int32 &left, int32 &width) const {
 
 	int32 mwidth = cChatStyle() == 0? qMin(int(msgMaxWidth()), _maxw) : msgMaxWidth();
 
-	if (_media && _media->currentWidth() < mwidth) {
+	if (_media && _media->currentWidth() < mwidth && cChatStyle() == 0) {
 		mwidth = qMax(_media->currentWidth(), qMin(mwidth, plainMaxWidth()));
 	}
 
@@ -6601,6 +6601,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 		}
 
 		QRect trect(r.marginsAdded(-msgPadding()));
+
 		drawMessageText(p, trect, selection);
 
 		if (_media && _media->isDisplayed()) {
@@ -6610,7 +6611,7 @@ void HistoryMessage::draw(Painter &p, const QRect &r, uint32 selection, uint64 m
 			_media->draw(p, this, r.translated(-left, -top), selected, ms);
 			p.restore();
 			if (!_media->customInfoLayout()) {
-				HistoryMessage::drawInfo(p, r.x() + r.width(), r.y() + r.height(), 2 * r.x() + r.width(), selected, InfoDisplayDefault);
+				HistoryMessage::drawInfo(p, r.x() + r.width(), cChatStyle() == 0? r.y() + r.height() : r.y(), 2 * r.x() + r.width(), selected, InfoDisplayDefault);
 			}
 		} else {
 			// Draw Time & Checks
