@@ -101,6 +101,7 @@ namespace {
 	typedef QMap<uint32, CornersPixmaps> CornersMap;
 	CornersMap cornersMap;
 	QImage *cornersMask[4] = { 0 };
+	QImage *cornersMask2[4] = { 0 };
 
 	typedef QMap<uint64, QPixmap> EmojiMap;
 	EmojiMap mainEmojiMap;
@@ -2100,11 +2101,17 @@ namespace App {
 		}
 
 		QImage mask[4];
+		QImage mask2[4];
 		prepareCorners(NoneCorners, st::msgRadius, st::white, 0, mask);
+		prepareCorners(NoneCorners2, st::msgPhotoRadius, st::white, 0, mask2);
+
 		for (int i = 0; i < 4; ++i) {
 			::cornersMask[i] = new QImage(mask[i].convertToFormat(QImage::Format_ARGB32_Premultiplied));
 			::cornersMask[i]->setDevicePixelRatio(cRetinaFactor());
+			::cornersMask2[i] = new QImage(mask2[i].convertToFormat(QImage::Format_ARGB32_Premultiplied));
+			::cornersMask2[i]->setDevicePixelRatio(cRetinaFactor());
 		}
+
 		prepareCorners(BlackCorners, st::msgRadius, st::black);
 		prepareCorners(ServiceCorners, st::msgRadius, st::msgServiceBg);
 		prepareCorners(ServiceSelectedCorners, st::msgRadius, st::msgServiceSelectBg);
@@ -2131,6 +2138,8 @@ namespace App {
 		prepareCorners(MessageInSelectedCorners, st::msgRadius, st::msgInBgSelected, &st::msgInShadowSelected);
 		prepareCorners(MessageOutCorners, st::msgRadius, st::msgOutBg, &st::msgOutShadow);
 		prepareCorners(MessageOutSelectedCorners, st::msgRadius, st::msgOutBgSelected, &st::msgOutShadowSelected);
+
+		prepareCorners(MessageOSXCorners, st::msgRadius, st::transparent);
 	}
 
 	void clearHistories() {
@@ -2159,6 +2168,7 @@ namespace App {
 				delete ::corners[i].p[j]; ::corners[i].p[j] = 0;
 			}
 			delete ::cornersMask[j]; ::cornersMask[j] = 0;
+			delete ::cornersMask2[j]; ::cornersMask2[j] = 0;
 		}
 		for (CornersMap::const_iterator i = ::cornersMap.cbegin(), e = ::cornersMap.cend(); i != e; ++i) {
 			for (int32 j = 0; j < 4; ++j) {
@@ -2631,6 +2641,10 @@ namespace App {
 	QImage **cornersMask() {
 		return ::cornersMask;
 	}
+	QImage **cornersMask2() {
+		return ::cornersMask2;
+	}
+
 	void roundRect(Painter &p, int32 x, int32 y, int32 w, int32 h, const style::color &bg, const CornersPixmaps &c, const style::color *sh) {
 		int32 cw = c.p[0]->width() / cIntRetinaFactor(), ch = c.p[0]->height() / cIntRetinaFactor();
 		if (w < 2 * cw || h < 2 * ch) return;

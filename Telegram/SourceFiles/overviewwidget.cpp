@@ -45,7 +45,7 @@ OverviewInner::OverviewInner(OverviewWidget *overview, ScrollArea *scroll, PeerD
 , _channel(peerToChannel(_peer->id))
 , _selMode(false)
 , _rowsLeft(0)
-, _rowWidth(st::msgMinWidth)
+, _rowWidth(cChatStyle() != 2? st::msgMinWidth : st::msgSKPMinWidth)
 , _search(this, st::dlgFilter, lang(lng_dlg_filter))
 , _cancelSearch(this, st::btnCancelSearch)
 , _itemsToBeLoaded(LinksOverviewPerPage * 2)

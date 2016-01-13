@@ -127,7 +127,7 @@ void PeerData::updateName(const QString &newName, const QString &newNameOrPhone,
 
 	++nameVersion;
 	name = newName;
-	nameText.setText(st::msgNameFont, name, _textNameOptions);
+	nameText.setText(cChatStyle() == 2? st::normalFont : st::msgNameFont, name, _textNameOptions);
 	if (isUser()) {
 		asUser()->username = newUsername;
 		asUser()->setNameOrPhone(newNameOrPhone);
@@ -293,7 +293,7 @@ void UserData::setBotInfo(const MTPBotInfo &info) {
 		QString desc = qs(d.vdescription);
 		if (botInfo->description != desc) {
 			botInfo->description = desc;
-			botInfo->text = Text(st::msgMinWidth);
+			botInfo->text = Text(cChatStyle() != 2? st::msgMinWidth : st::msgSKPMinWidth);
 		}
 		botInfo->shareText = qs(d.vshare_text);
 

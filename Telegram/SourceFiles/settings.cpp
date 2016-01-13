@@ -82,6 +82,8 @@ QByteArray gDownloadPathBookmark;
 
 bool gNeedConfigResave = false;
 
+int32 gChatStyle = 0;
+
 bool gCtrlEnter = false;
 
 QPixmapPointer gChatBackground = 0;

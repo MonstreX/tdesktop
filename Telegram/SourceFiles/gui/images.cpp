@@ -116,7 +116,7 @@ const QPixmap &Image::pix(int32 w, int32 h) const {
 	return i.value();
 }
 
-const QPixmap &Image::pixRounded(int32 w, int32 h) const {
+const QPixmap &Image::pixRounded(int32 w, int32 h, int32 rounded) const {
 	checkload();
 
 	if (w <= 0 || !width() || !height()) {
@@ -128,7 +128,7 @@ const QPixmap &Image::pixRounded(int32 w, int32 h) const {
 	uint64 k = RoundedCacheSkip | (uint64(w) << 32) | uint64(h);
 	Sizes::const_iterator i = _sizesCache.constFind(k);
 	if (i == _sizesCache.cend()) {
-		QPixmap p(pixNoCache(w, h, true, false, true));
+		QPixmap p(pixNoCache(w, h, true, false, rounded));
 		if (cRetina()) p.setDevicePixelRatio(cRetinaFactor());
 		i = _sizesCache.insert(k, p);
 		if (!p.isNull()) {
@@ -372,11 +372,12 @@ yi += stride;
 	return img;
 }
 
-void imageRound(QImage &img) {
+void imageRound(QImage &img, int32 rounded) {
 	img.setDevicePixelRatio(cRetinaFactor());
 	img = img.convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
-	QImage **masks = App::cornersMask();
+	QImage **masks = rounded != 2? App::cornersMask() : App::cornersMask2(); // For two styles of rounded corners 1-default, 2-second type
+
 	int32 w = masks[0]->width(), h = masks[0]->height();
 	int32 tw = img.width(), th = img.height();
 
@@ -426,7 +427,7 @@ QImage imageColored(const style::color &add, QImage img) {
 	return img;
 }
 
-QPixmap imagePix(QImage img, int32 w, int32 h, bool smooth, bool blurred, bool rounded, int32 outerw, int32 outerh) {
+QPixmap imagePix(QImage img, int32 w, int32 h, bool smooth, bool blurred, int32 rounded, int32 outerw, int32 outerh) {
 	if (blurred) img = imageBlur(img);
 	if (w <= 0 || (w == img.width() && (h <= 0 || h == img.height()))) {
 	} else if (h <= 0) {
@@ -451,12 +452,12 @@ QPixmap imagePix(QImage img, int32 w, int32 h, bool smooth, bool blurred, bool r
 			img = result;
 		}
 	}
-	if (rounded) imageRound(img);
+	if (rounded) imageRound(img,rounded);
 	img.setDevicePixelRatio(cRetinaFactor());
 	return QPixmap::fromImage(img, Qt::ColorOnly);
 }
 
-QPixmap Image::pixNoCache(int32 w, int32 h, bool smooth, bool blurred, bool rounded, int32 outerw, int32 outerh) const {
+QPixmap Image::pixNoCache(int32 w, int32 h, bool smooth, bool blurred, int32 rounded, int32 outerw, int32 outerh) const {
 	if (!loading()) const_cast<Image*>(this)->load();
 	restore();
 	if (_data.isNull()) {
@@ -486,7 +487,7 @@ QPixmap Image::pixNoCache(int32 w, int32 h, bool smooth, bool blurred, bool roun
 			p.fillRect(qMax(0, (outerw - w) / 2), qMax(0, (outerh - h) / 2), qMin(result.width(), w), qMin(result.height(), h), st::white);
 		}
 
-		if (rounded) imageRound(result);
+		if (rounded) imageRound(result,rounded);
 		return QPixmap::fromImage(result, Qt::ColorOnly);
 	}
 	return imagePix(_data.toImage(), w, h, smooth, blurred, rounded, outerw, outerh);

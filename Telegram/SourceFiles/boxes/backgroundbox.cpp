@@ -42,6 +42,7 @@ void BackgroundInner::gotWallpapers(const MTPVector<MTPWallPaper> &result) {
 	App::WallPapers wallpapers;
 
 	wallpapers.push_back(App::WallPaper(0, ImagePtr(st::msgBG0), ImagePtr(st::msgBG0)));
+	wallpapers.push_back(App::WallPaper(1, ImagePtr(st::msgBG1), ImagePtr(st::msgBG1)));
 	const QVector<MTPWallPaper> &v(result.c_vector().v);
 	for (int i = 0, l = v.size(); i < l; ++i) {
 		const MTPWallPaper w(v.at(i));

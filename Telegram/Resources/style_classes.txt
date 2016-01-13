@@ -391,3 +391,4 @@ InputField {
 	iconSprite: sprite;
 	iconPosition: point;
 }
+

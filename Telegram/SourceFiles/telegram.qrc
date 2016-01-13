@@ -6,6 +6,7 @@
         <file>art/newmsg.wav</file>
         <file>art/bg.jpg</file>
         <file>art/bg0.png</file>
+        <file>art/bg1.jpg</file>
         <file>art/sprite.png</file>
         <file>art/sprite_125x.png</file>
         <file>art/sprite_150x.png</file>
@@ -36,6 +37,7 @@
         <file>qmime/freedesktop.org.xml</file>
     </qresource>
     <qresource prefix="/langs">
+        <file alias="lang_ru.strings">langs/lang_ru.strings</file>
         <file alias="lang_it.strings">langs/lang_it.strings</file>
         <file alias="lang_es.strings">langs/lang_es.strings</file>
         <file alias="lang_de.strings">langs/lang_de.strings</file>

@@ -4808,6 +4808,8 @@ void HistoryWidget::onDocumentSelect() {
 void HistoryWidget::dragEnterEvent(QDragEnterEvent *e) {
 	if (!_history) return;
 
+	if (_peer && (_peer->isChannel() && !_peer->asChannel()->canPublish())) return;
+
 	_attachDrag = getDragState(e->mimeData());
 	updateDragAreas();
 
@@ -5150,6 +5152,8 @@ void HistoryWidget::onPhotoDrop(const QMimeData *data) {
 void HistoryWidget::onDocumentDrop(const QMimeData *data) {
 	if (!_history) return;
 
+	if (_peer && (_peer->isChannel() && !_peer->asChannel()->canPublish())) return;
+
 	QStringList files = getMediasFromMime(data);
 	if (files.isEmpty()) return;
 
@@ -5157,6 +5161,9 @@ void HistoryWidget::onDocumentDrop(const QMimeData *data) {
 }
 
 void HistoryWidget::onFilesDrop(const QMimeData *data) {
+
+	if (_peer && (_peer->isChannel() && !_peer->asChannel()->canPublish())) return;
+
 	QStringList files = getMediasFromMime(data);
 	if (files.isEmpty()) {
 		if (data->hasImage()) {

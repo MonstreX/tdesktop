@@ -57,7 +57,10 @@ enum RoundCorners {
 	MessageInSelectedCorners,
 	MessageOutCorners,
 	MessageOutSelectedCorners,
-
+	
+	NoneCorners2,
+	MessageOSXCorners,	                  	
+	
 	RoundCornersCount
 };
 

@@ -33,4 +33,8 @@ ipch/
 /Telegram/Makefile
 *.*~
 
+<<<<<<< HEAD
 Telegram.VC.opendb
+=======
+Telegram.VC.opendb
+>>>>>>> dev

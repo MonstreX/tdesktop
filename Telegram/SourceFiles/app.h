@@ -259,6 +259,8 @@ namespace App {
 	void setProxySettings(QTcpSocket &socket);
 
 	QImage **cornersMask();
+	QImage **cornersMask2();
+
 	void roundRect(Painter &p, int32 x, int32 y, int32 w, int32 h, const style::color &bg, RoundCorners index, const style::color *sh = 0);
 	inline void roundRect(Painter &p, const QRect &rect, const style::color &bg, RoundCorners index, const style::color *sh = 0) {
 		return roundRect(p, rect.x(), rect.y(), rect.width(), rect.height(), bg, index, sh);

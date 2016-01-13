@@ -999,6 +999,40 @@ historyToEndSkip: 10px;
 activeFadeInDuration: 500;
 activeFadeOutDuration: 3000;
 
+/* STRAT Extra new parameters */
+msgPhotoRadius: 15px;
+msgOSXMaxWidth: 650px;
+msgOSXMinWidth: 190px;
+msgOSXPhotoSize: 30px;
+msgOSXPhotoSkip: 40px;
+msgOSXPhotoTop: 10px;
+msgOSXMargin: margins(30px, 4px, 53px, 4px);
+msgOSXPadding: margins(3px, 2px, 80px, 2px);
+msgOSXDateDelta: point(15px, 3px);
+
+msgSKPMaxWidth: 650px;
+msgSKPMinWidth: 50px;
+msgSKPPhotoSize: 30px;
+msgSKPPhotoSkip: 10px;
+msgSKPMargin: margins(150px, 3px, 53px, 3px);
+msgSKPPadding: margins(3px, 1px, 80px, 1px);
+msgSKPDateDelta: point(15px, 22px);
+msgSKPNameFont: normalFont;
+msgSKPNameColor: #999999;
+msgSKPNameFromColor: #3a78d3;
+
+msgICQMaxWidth: 650px;
+msgICQMinWidth: 190px;
+msgICQPhotoSize: 30px;
+msgICQPhotoSkip: 40px;
+msgICQMargin: margins(40px, 2px, 53px, 2px);
+msgICQPadding: margins(3px, 1px, 13px, 1px);
+msgICQDateDelta: point(70px, 3px);
+
+msgOutColor: #4C8849;
+/* END Extra new parameters */
+
+
 msgRadius: 3px;
 
 msgMaxWidth: 430px;
@@ -1011,7 +1045,7 @@ msgDateFont: font(13px);
 msgMinWidth: 190px;
 msgPhotoSize: 30px;
 msgPhotoSkip: 40px;
-msgPadding: margins(13px, 7px, 13px, 8px);
+msgPadding: margins(13px, 3px, 13px, 5px);
 msgMargin: margins(13px, 4px, 53px, 4px);
 msgLnkPadding: 2px; // for media open / save links
 msgBorder: #f0f0f0;
@@ -1058,6 +1092,7 @@ msgSkip: 40px;
 msgPtr: 8px;
 msgBG: ':/gui/art/bg.jpg';
 msgBG0: ':/gui/art/bg0.png';
+msgBG1: ':/gui/art/bg1.jpg';
 
 msgCheckPos: point(3px, 1px);
 msgSendingImg: sprite(260px, 20px, 20px, 20px);
