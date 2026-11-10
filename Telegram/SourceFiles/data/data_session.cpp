@@ -5946,6 +5946,11 @@ void Session::setWallpapers(const QVector<MTPWallPaper> &data, uint64 hash) {
 		_wallpapers.back().setLocalImageAsThumbnail(std::make_shared<Image>(
 			u":/gui/art/bg_thumbnail.png"_q));
 	}
+
+	// A plain white background, the same as the t.me/bg/ffffff link gives.
+	if (const auto white = Data::WallPaper::FromColorsSlug(u"ffffff"_q)) {
+		_wallpapers.push_back(*white);
+	}
 }
 
 void Session::removeWallpaper(const WallPaper &paper) {
