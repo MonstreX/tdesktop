@@ -282,7 +282,8 @@ void BottomInfo::paint(
 	auto right = position.x() + width();
 	const auto firstLineBottom = position.y() + st::msgDateFont->height;
 	const auto &layout = CurrentChatLayout();
-	const auto sendStateBeforeTime = layout.sendStateBeforeTime;
+	const auto sendStateBeforeTime = (layout.sendState
+		== SendStatePlacement::BeforeTime);
 	const auto paintSendState = [&] {
 		if (!(_data.flags & Data::Flag::OutLayout)) {
 			return;

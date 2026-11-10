@@ -894,6 +894,10 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 "lng_settings_advanced" = "Advanced";
 "lng_settings_stickers_emoji" = "Stickers and emoji";
 "lng_settings_messages" = "Messages";
+"lng_settings_chat_layout" = "Chat style";
+"lng_settings_chat_layout_telegram" = "Telegram";
+"lng_settings_chat_layout_classic" = "Classic";
+"lng_settings_chat_layout_qip" = "QIP";
 "lng_settings_themes" = "Themes";
 "lng_settings_theme_day" = "Day";
 "lng_settings_theme_classic" = "Classic";

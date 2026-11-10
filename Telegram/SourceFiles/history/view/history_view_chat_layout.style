@@ -21,3 +21,11 @@ historyClassicMetrics: ChatLayoutMetrics {
 	timeSkip: 12px;
 	sendStateSkip: 4px;
 }
+
+historyQipMetrics: ChatLayoutMetrics {
+	padding: margins(8px, 3px, 8px, 3px);
+	margin: margins(8px, 3px, 16px, 1px);
+	photoSkip: 40px;
+	timeSkip: 0px;
+	sendStateSkip: 5px;
+}

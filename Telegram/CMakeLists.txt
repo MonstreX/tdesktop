@@ -1958,6 +1958,8 @@ PRIVATE
     settings/sections/settings_business.h
     settings/sections/settings_calls.cpp
     settings/sections/settings_calls.h
+    settings/settings_chat_layout.cpp
+    settings/settings_chat_layout.h
     settings/settings_codes.cpp
     settings/settings_codes.h
     settings/settings_common_session.h
@@ -2667,6 +2669,7 @@ PRIVATE
     qrc/telegram/telegram.qrc
     qrc/telegram/sounds.qrc
     qrc/telegram/tgw.qrc
+    qrc/voyager/voyager.qrc
     winrc/Telegram.rc
     winrc/Telegram.manifest
     langs/lang.strings

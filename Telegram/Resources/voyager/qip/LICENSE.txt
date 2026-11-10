@@ -1,0 +1,15 @@
+Send state icons of the QIP chat style.
+
+The icons are taken unmodified from the "Farm-Fresh Web Icons" set
+by FatCow Web Hosting, version 3.9.2:
+https://www.fatcow.com/free-icons
+
+They are licensed under the Creative Commons Attribution 3.0 License:
+https://creativecommons.org/licenses/by/3.0/
+
+Files and their original names (16x16 and 32x32 as @2x):
+  status_incoming  mail_yellow
+  status_sending   email_go
+  status_sent      mail_green
+  status_read      email_open
+  status_failed    email_error

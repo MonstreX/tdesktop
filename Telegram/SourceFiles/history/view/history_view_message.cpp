@@ -1601,11 +1601,13 @@ QSize Message::performCountOptimalSize() {
 				const auto &name = from
 					? _fromName
 					: item->displayHiddenSenderInfo()->nameText();
+				const auto header = nameHeaderParts();
 				auto namew = st::msgPadding.left()
 					+ name.maxWidth()
 					+ (_fromNameStatus
 						? st::dialogsPremiumIcon.icon.width()
 						: 0)
+					+ header.timeWidth
 					+ st::msgPadding.right();
 				if (via && !displayForwardedFrom()) {
 					namew += st::msgServiceFont->spacew + via->maxWidth
@@ -2519,15 +2521,25 @@ void Message::paintFromName(
 	if (badgeWidth) {
 		availableWidth -= st::msgPadding.right() + badgeWidth;
 	}
+	const auto header = nameHeaderParts();
+	if (header.sendStateSkip) {
+		// The icon hangs to the left of the content column.
+		PaintNameSendState(
+			p,
+			this,
+			availableLeft - header.sendStateSkip,
+			trect.top());
+	}
+	availableWidth -= header.timeWidth;
 
 	const auto stm = context.messageStyle();
 	const auto from = displayFrom();
 	const auto info = from ? nullptr : item->displayHiddenSenderInfo();
 	Assert(from || info);
-	const auto nameFg = FromNameFg(
+	const auto nameFg = DirectionNameColor(this).value_or(FromNameFg(
 		context,
 		colorIndex(),
-		colorCollectible());
+		colorCollectible()));
 	const auto nameText = [&] {
 		if (from) {
 			validateFromNameText(from);
@@ -2618,6 +2630,16 @@ void Message::paintFromName(
 		+ st::msgServiceFont->spacew;
 	availableLeft += skipWidth;
 	availableWidth -= skipWidth;
+
+	if (!header.time.isEmpty()) {
+		p.setFont(st::msgNameFont);
+		p.setPen(nameFg);
+		p.drawText(
+			availableLeft,
+			trect.top() + st::msgNameFont->ascent,
+			header.time);
+		availableLeft += header.timeWidth;
+	}
 
 	if (via && !displayForwardedFrom() && availableWidth > 0) {
 		p.setPen(stm->msgServiceFg);
@@ -3851,7 +3873,8 @@ void Message::unloadHeavyPart() {
 }
 
 bool Message::hasFromPhoto() const {
-	if (isHidden()) {
+	if (isHidden()
+		|| CurrentChatLayout().userpic == UserpicPlacement::None) {
 		return false;
 	}
 	switch (context()) {
@@ -4249,6 +4272,8 @@ bool Message::getStateFromName(
 		if (badgeWidth) {
 			availableWidth -= st::msgPadding.right() + badgeWidth;
 		}
+		const auto header = nameHeaderParts();
+		availableWidth -= header.timeWidth;
 		const auto item = data();
 		const auto from = displayFrom();
 		const auto nameText = [&]() -> const Ui::Text::String * {
@@ -4308,7 +4333,7 @@ bool Message::getStateFromName(
 					+ st::msgServiceFont->spacew)
 				: 0)
 			+ st::msgServiceFont->spacew;
-		availableLeft += skipWidth;
+		availableLeft += skipWidth + header.timeWidth;
 		availableWidth -= skipWidth;
 
 		if (via
@@ -5364,7 +5389,9 @@ void Message::drawInfo(
 		int bottom,
 		int width,
 		InfoDisplayType type) const {
-	if (hidesBottomInfo()) {
+	// With the time after the sender name nothing else shows the time.
+	if (hidesBottomInfo()
+		|| CurrentChatLayout().time == TimePlacement::AfterName) {
 		return;
 	}
 	p.setFont(st::msgDateFont);
@@ -5426,7 +5453,8 @@ TextState Message::bottomInfoTextState(
 		int bottom,
 		QPoint point,
 		InfoDisplayType type) const {
-	if (hidesBottomInfo()) {
+	if (hidesBottomInfo()
+		|| CurrentChatLayout().time == TimePlacement::AfterName) {
 		return {};
 	}
 	auto infoRight = right;
@@ -5810,7 +5838,9 @@ bool Message::hasFromName() const {
 }
 
 bool Message::displayFromName() const {
-	if (!hasFromName() || isAttachedToPrevious() || data()->isSponsored()) {
+	const auto attachedWithoutName = isAttachedToPrevious()
+		&& !CurrentChatLayout().headerForEachMessage;
+	if (!hasFromName() || attachedWithoutName || data()->isSponsored()) {
 		return false;
 	}
 	return !Has<PsaTooltipState>();
@@ -6537,6 +6567,8 @@ QRect Message::countGeometry() const {
 	//} else if (!Adaptive::Wide() && !out() && !fromChannel() && st::msgPhotoSkip - (hmaxwidth - hwidth) > 0) {
 	//	contentLeft += st::msgPhotoSkip - (hmaxwidth - hwidth);
 	}
+	// The send state icon column, the content starts after it.
+	contentLeft += NameSendStateSkip();
 	contentWidth -= layoutWidthReserve();
 	accumulate_min(contentWidth, maxWidth());
 	accumulate_min(contentWidth, int(_bubbleWidthLimit));
@@ -7223,8 +7255,21 @@ bool Message::needInfoDisplay() const {
 	return !hidesBottomInfo() && usesMessageInfoLayout();
 }
 
+Message::NameHeaderParts Message::nameHeaderParts() const {
+	auto result = NameHeaderParts{
+		.sendStateSkip = NameSendStateSkip(),
+		.time = NameTimeText(this),
+	};
+	if (!result.time.isEmpty()) {
+		result.timeWidth = st::msgServiceFont->spacew
+			+ st::msgNameFont->width(result.time);
+	}
+	return result;
+}
+
 bool Message::hasHeaderInfo() const {
-	return CurrentChatLayout().timeInHeader && needInfoDisplay();
+	return (CurrentChatLayout().time == TimePlacement::HeaderRight)
+		&& needInfoDisplay();
 }
 
 int Message::layoutWidthReserve() const {
@@ -7232,8 +7277,10 @@ int Message::layoutWidthReserve() const {
 	if (!layout.leftAligned) {
 		return 0;
 	}
-	// The userpic column on the left and the time column on the right.
-	auto result = hasFromPhoto() ? st::msgPhotoSkip : 0;
+	// The userpic or the send state icon column on the left
+	// and the time column on the right.
+	auto result = (hasFromPhoto() ? st::msgPhotoSkip : 0)
+		+ NameSendStateSkip();
 	if (hasHeaderInfo()) {
 		result += infoWidth();
 		if (layout.metrics) {

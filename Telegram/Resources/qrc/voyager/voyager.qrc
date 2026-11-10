@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="/voyager">
+    <file alias="qip/status_incoming.png">../../voyager/qip/status_incoming.png</file>
+    <file alias="qip/status_incoming@2x.png">../../voyager/qip/status_incoming@2x.png</file>
+    <file alias="qip/status_sending.png">../../voyager/qip/status_sending.png</file>
+    <file alias="qip/status_sending@2x.png">../../voyager/qip/status_sending@2x.png</file>
+    <file alias="qip/status_sent.png">../../voyager/qip/status_sent.png</file>
+    <file alias="qip/status_sent@2x.png">../../voyager/qip/status_sent@2x.png</file>
+    <file alias="qip/status_read.png">../../voyager/qip/status_read.png</file>
+    <file alias="qip/status_read@2x.png">../../voyager/qip/status_read@2x.png</file>
+    <file alias="qip/status_failed.png">../../voyager/qip/status_failed.png</file>
+    <file alias="qip/status_failed@2x.png">../../voyager/qip/status_failed@2x.png</file>
+  </qresource>
+</RCC>

@@ -483,6 +483,14 @@ private:
 	[[nodiscard]] bool hasHeaderInfo() const;
 	[[nodiscard]] int layoutWidthReserve() const;
 
+	// Parts of the QIP-like header around the sender name.
+	struct NameHeaderParts {
+		int sendStateSkip = 0;
+		QString time;
+		int timeWidth = 0; // Includes the space before the time.
+	};
+	[[nodiscard]] NameHeaderParts nameHeaderParts() const;
+
 	[[nodiscard]] bool invertMedia() const;
 	[[nodiscard]] bool hasFastReply() const;
 	[[nodiscard]] bool displayFastReply() const;

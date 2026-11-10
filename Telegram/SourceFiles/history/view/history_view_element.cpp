@@ -1609,15 +1609,17 @@ bool Element::hasCommentsButton() const {
 }
 
 int Element::skipBlockWidth() const {
-	// With the time in the header the text keeps no room for it.
-	if (hidesBottomInfo() || CurrentChatLayout().timeInHeader) {
+	// With the time outside of the text the text keeps no room for it.
+	if (hidesBottomInfo()
+		|| CurrentChatLayout().time != TimePlacement::InBubble) {
 		return 0;
 	}
 	return st::msgDateSpace + infoWidth() - st::msgDateDelta.x();
 }
 
 int Element::skipBlockHeight() const {
-	if (hidesBottomInfo() || CurrentChatLayout().timeInHeader) {
+	if (hidesBottomInfo()
+		|| CurrentChatLayout().time != TimePlacement::InBubble) {
 		return 0;
 	}
 	return st::msgDateFont->height - st::msgDateDelta.y();
