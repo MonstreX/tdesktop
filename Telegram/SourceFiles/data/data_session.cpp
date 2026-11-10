@@ -5951,6 +5951,15 @@ void Session::setWallpapers(const QVector<MTPWallPaper> &data, uint64 hash) {
 	if (const auto white = Data::WallPaper::FromColorsSlug(u"ffffff"_q)) {
 		_wallpapers.push_back(*white);
 	}
+
+	// The QIP chat background: light blue on the left to white on the
+	// right, as t.me/bg/d9e8ed-f7f7f7?rotation=270 gives.
+	if (const auto qip = Data::WallPaper::FromColorsSlug(
+			u"d9e8ed-f7f7f7"_q)) {
+		_wallpapers.push_back(qip->withUrlParams({
+			{ u"rotation"_q, u"270"_q },
+		}));
+	}
 }
 
 void Session::removeWallpaper(const WallPaper &paper) {
