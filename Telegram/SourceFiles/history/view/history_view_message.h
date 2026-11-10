@@ -471,6 +471,18 @@ private:
 	[[nodiscard]] int bottomInfoHeight() const;
 	[[nodiscard]] bool usesMessageInfoLayout() const;
 	[[nodiscard]] bool needInfoDisplay() const;
+
+	// Where the message itself paints its time and read marks.
+	struct InfoPlacement {
+		int right = 0;
+		int bottom = 0;
+		int outerWidth = 0;
+		InfoDisplayType type = InfoDisplayType();
+	};
+	[[nodiscard]] InfoPlacement messageInfoPlacement(QRect inner) const;
+	[[nodiscard]] bool hasHeaderInfo() const;
+	[[nodiscard]] int layoutWidthReserve() const;
+
 	[[nodiscard]] bool invertMedia() const;
 	[[nodiscard]] bool hasFastReply() const;
 	[[nodiscard]] bool displayFastReply() const;

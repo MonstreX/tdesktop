@@ -8,6 +8,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "window/window_adaptive.h"
 
 #include "history/history_item.h"
+#include "history/view/history_view_chat_layout.h"
 #include "data/data_media_types.h"
 #include "data/data_session.h"
 #include "core/application.h"
@@ -63,6 +64,10 @@ bool Adaptive::isThreeColumn() const {
 }
 
 rpl::producer<bool> Adaptive::chatWideValue() const {
+	// Left-aligned layouts rely on the wide mode for any window width.
+	if (HistoryView::CurrentChatLayout().leftAligned) {
+		return rpl::single(true);
+	}
 	return rpl::combine(
 		_chatLayout.value(
 		) | rpl::map(rpl::mappers::_1 == Adaptive::ChatLayout::Wide),

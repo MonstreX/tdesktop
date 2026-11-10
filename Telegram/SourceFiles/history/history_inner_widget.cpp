@@ -26,6 +26,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/view/reactions/history_view_reactions_button.h"
 #include "history/view/reactions/history_view_reactions_selector.h"
 #include "history/view/history_view_about_view.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_drag.h"
 #include "history/view/history_view_message.h"
 #include "history/view/history_view_service_message.h"
@@ -1084,6 +1085,13 @@ void HistoryInner::enumerateUserpics(Method method) {
 		if (view->isHidden() || item->isService()) {
 			return true;
 		}
+		if (HistoryView::CurrentChatLayout().userpic
+			== HistoryView::UserpicPlacement::GroupTop) {
+			if (const auto top = HistoryView::GroupTopUserpicTop(view, itemtop)) {
+				return method(view, *top);
+			}
+			return true;
+		}
 
 		if (lowestAttachedItemTop < 0 && view->isAttachedToNext()) {
 			lowestAttachedItemTop = itemtop + view->marginTop();
@@ -1629,7 +1637,7 @@ void HistoryInner::paintEvent(QPaintEvent *e) {
 			const auto height = view->height();
 			context.reactionInfo
 				= _reactionsManager->currentReactionPaintInfo();
-			context.outbg = view->hasOutLayout();
+			context.outbg = HistoryView::UseOutgoingPalette(view);
 			const auto selection = itemRenderSelection(
 				view,
 				selfromy - mtop,
@@ -1698,7 +1706,7 @@ void HistoryInner::paintEvent(QPaintEvent *e) {
 				&& !sendingAnimation.hasAnimatedMessage(item)) {
 				context.reactionInfo
 					= _reactionsManager->currentReactionPaintInfo();
-				context.outbg = view->hasOutLayout();
+				context.outbg = HistoryView::UseOutgoingPalette(view);
 				const auto selection = itemRenderSelection(
 					view,
 					selfromy - htop,

@@ -27,6 +27,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/view/history_view_context_menu.h"
 #include "history/view/history_view_copy_selection.h"
 #include "history/view/history_view_about_view.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_drag.h"
 #include "history/view/history_view_element.h"
 #include "history/view/history_view_emoji_interactions.h"
@@ -403,6 +404,12 @@ void ListWidget::enumerateUserpics(Method method) {
 	auto userpicCallback = [&](not_null<Element*> view, int itemtop, int itembottom) {
 		// Skip all service messages.
 		if (view->data()->isService()) {
+			return true;
+		}
+		if (CurrentChatLayout().userpic == UserpicPlacement::GroupTop) {
+			if (const auto top = GroupTopUserpicTop(view, itemtop)) {
+				return method(view, *top);
+			}
 			return true;
 		}
 
@@ -3558,7 +3565,7 @@ void ListWidget::paintEvent(QPaintEvent *e) {
 				context.reactionInfo
 					= _reactionsManager->currentReactionPaintInfo();
 			}
-			context.outbg = view->hasOutLayout();
+			context.outbg = UseOutgoingPalette(view);
 			const auto selection = itemRenderSelection(view);
 			context.selection = selection.selection;
 			context.fullMessageSelected = selection.fullMessageSelected;

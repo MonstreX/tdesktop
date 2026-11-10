@@ -1134,6 +1134,8 @@ PRIVATE
     history/view/history_view_about_view.h
     history/view/history_view_bottom_info.cpp
     history/view/history_view_bottom_info.h
+    history/view/history_view_chat_layout.cpp
+    history/view/history_view_chat_layout.h
     history/view/history_view_chat_preview.cpp
     history/view/history_view_chat_preview.h
     history/view/history_view_chat_section.cpp

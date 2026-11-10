@@ -18,6 +18,7 @@ set(style_files
     ui/chat/chat.style
     ui/chat/chat_style.style
     history/view/history_view_about_view.style
+    history/view/history_view_chat_layout.style
     ui/effects/credits.style
     ui/effects/premium.style
     ui/effects/premium_limits.style

@@ -1,0 +1,23 @@
+/*
+This file is part of Voyager, a fork of Telegram Desktop.
+
+For license and copyright information please follow this link:
+https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
+*/
+using "ui/chat/chat.style";
+
+ChatLayoutMetrics {
+	padding: margins;
+	margin: margins;
+	photoSkip: pixels;
+	timeSkip: pixels;
+	sendStateSkip: pixels;
+}
+
+historyClassicMetrics: ChatLayoutMetrics {
+	padding: margins(11px, 5px, 11px, 5px);
+	margin: margins(16px, 4px, 16px, 2px);
+	photoSkip: 35px;
+	timeSkip: 12px;
+	sendStateSkip: 4px;
+}

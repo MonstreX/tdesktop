@@ -39,6 +39,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "ffmpeg/ffmpeg_utility.h"
 #include "history/history_item_components.h"
 #include "history/view/controls/compose_controls_common.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_message.h"
 #include "info/profile/info_profile_actions.h"
 #include "info/profile/tabs/adapters/info_profile_tab_media.h"
@@ -398,6 +399,7 @@ void SetupExperimental(
 		{
 			u"Messages"_q,
 			{
+				HistoryView::kOptionClassicChatLayout,
 				Ui::kOptionUseSmallMsgBubbleRadius,
 				HistoryView::kOptionUnlimitedMessageWidth,
 				HistoryView::Controls::kOptionMacCmdReplyImmediately,

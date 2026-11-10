@@ -87,6 +87,7 @@ enum class InfoDisplayType : char {
 	Image,
 	ImageLeftToRight,
 	Background,
+	Header, // Right edge of the first line, see ChatLayout::timeInHeader.
 };
 
 [[nodiscard]] not_null<HistoryItem*> LookupItemByPoint(

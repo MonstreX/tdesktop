@@ -16,6 +16,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "core/click_handler_types.h" // ClickHandlerContext
 #include "core/ui_integration.h"
 #include "core/update_checker.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_cursor_state.h"
 #include "history/history_item_components.h"
 #include "history/history_item_helpers.h"
@@ -69,6 +70,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "styles/style_chat_helpers.h"
 #include "styles/style_chat_style.h"
 #include "styles/style_dialogs.h"
+#include "styles/style_history_view_chat_layout.h"
 #include "styles/style_iv.h"
 #include "styles/style_polls.h"
 
@@ -1997,7 +1999,9 @@ void Message::draw(Painter &p, const PaintContext &context) const {
 				}
 			}
 		}
-		if (!richPageGaps.empty()) {
+		if (!CurrentChatLayout().bubbles) {
+			PaintRowSelection(p, context, width(), height());
+		} else if (!richPageGaps.empty()) {
 			if (!rich->tornEdges) {
 				rich->tornEdges = std::make_unique<Ui::TornEdgeCache>();
 			}
@@ -2194,14 +2198,15 @@ void Message::draw(Painter &p, const PaintContext &context) const {
 					&& (mediaSelectionIntervals.back().top
 						+ mediaSelectionIntervals.back().height
 						>= inner.y() + inner.height()));
+			const auto info = messageInfoPlacement(inner);
 			drawInfo(
 				p,
 				context.withSelection(
 					bottomSelected ? FullSelection : TextSelection()),
-				inner.left() + inner.width(),
-				inner.top() + inner.height(),
-				2 * inner.left() + inner.width(),
-				InfoDisplayType::Default);
+				info.right,
+				info.bottom,
+				info.outerWidth,
+				info.type);
 			if (context.reactionInfo && !_reactions) {
 				const auto add = QPoint(0, inner.top() + inner.height());
 				context.reactionInfo->position = add;
@@ -4087,11 +4092,12 @@ TextState Message::textState(
 				&& (check || entry || media->customInfoLayout())) {
 				return;
 			}
+			const auto info = messageInfoPlacement(inner);
 			const auto bottomInfoResult = bottomInfoTextState(
-				inner.left() + inner.width(),
-				inner.top() + inner.height(),
+				info.right,
+				info.bottom,
 				point,
-				InfoDisplayType::Default);
+				info.type);
 			if (bottomInfoResult.link
 				|| bottomInfoResult.cursor != CursorState::None
 				|| bottomInfoResult.customTooltip) {
@@ -4099,6 +4105,10 @@ TextState Message::textState(
 			}
 		};
 		if (!inBubble) {
+			// The header time lies outside of the content rect.
+			if (hasHeaderInfo()) {
+				checkBottomInfoState();
+			}
 			if (point.y() >= g.y() + g.height()) {
 				AddTextStateOffset(&result, visibleTextLen + visibleMediaTextLen);
 			}
@@ -5384,6 +5394,9 @@ void Message::drawInfo(
 		infoBottom -= st::msgDateImgPadding.y();
 		p.setPen(st->msgServiceFg());
 	break;
+	case InfoDisplayType::Header:
+		p.setPen(stm->msgDateFg);
+	break;
 	}
 
 	const auto size = _bottomInfo.currentSize();
@@ -5431,6 +5444,8 @@ TextState Message::bottomInfoTextState(
 	case InfoDisplayType::Background:
 		infoRight -= st::msgDateImgPadding.x();
 		infoBottom -= st::msgDateImgPadding.y();
+		break;
+	case InfoDisplayType::Header:
 		break;
 	}
 	const auto size = _bottomInfo.currentSize();
@@ -5757,6 +5772,12 @@ bool Message::hasFromName() const {
 	case Context::ScheduledTopic: {
 		const auto item = data();
 		const auto peer = item->history()->peer;
+		if (CurrentChatLayout().nameForEveryone && !item->isPost()) {
+			if (const auto media = this->media()) {
+				return !media->hideFromName();
+			}
+			return true;
+		}
 		if (hasOutLayout() && !item->from()->isChannel()) {
 			if (peer->isSelf()) {
 				if (const auto forwarded = item->Get<HistoryMessageForwarded>()) {
@@ -6516,6 +6537,7 @@ QRect Message::countGeometry() const {
 	//} else if (!Adaptive::Wide() && !out() && !fromChannel() && st::msgPhotoSkip - (hmaxwidth - hwidth) > 0) {
 	//	contentLeft += st::msgPhotoSkip - (hmaxwidth - hwidth);
 	}
+	contentWidth -= layoutWidthReserve();
 	accumulate_min(contentWidth, maxWidth());
 	accumulate_min(contentWidth, int(_bubbleWidthLimit));
 	if (mediaWidth < contentWidth) {
@@ -6656,8 +6678,11 @@ int Message::resizeContentGetHeight(int newWidth) {
 			contentWidth -= size->width() + (st::msgPhotoSkip - st::historyFastShareSize);
 		}
 	}
+	contentWidth -= layoutWidthReserve();
 	accumulate_min(contentWidth, maxWidth());
-	_bubbleWidthLimit = (UnlimitedMessageWidth.value() && !mediaDisplayed)
+	const auto unlimitedWidth = UnlimitedMessageWidth.value()
+		|| CurrentChatLayout().unlimitedWidth;
+	_bubbleWidthLimit = (unlimitedWidth && !mediaDisplayed)
 		? 0x3FFFFFF
 		: std::max({
 			st::msgMaxWidth,
@@ -7196,6 +7221,50 @@ bool Message::usesMessageInfoLayout() const {
 
 bool Message::needInfoDisplay() const {
 	return !hidesBottomInfo() && usesMessageInfoLayout();
+}
+
+bool Message::hasHeaderInfo() const {
+	return CurrentChatLayout().timeInHeader && needInfoDisplay();
+}
+
+int Message::layoutWidthReserve() const {
+	const auto &layout = CurrentChatLayout();
+	if (!layout.leftAligned) {
+		return 0;
+	}
+	// The userpic column on the left and the time column on the right.
+	auto result = hasFromPhoto() ? st::msgPhotoSkip : 0;
+	if (hasHeaderInfo()) {
+		result += infoWidth();
+		if (layout.metrics) {
+			result += layout.metrics->timeSkip;
+		}
+	}
+	return result;
+}
+
+Message::InfoPlacement Message::messageInfoPlacement(QRect inner) const {
+	if (!hasHeaderInfo()) {
+		return {
+			.right = inner.left() + inner.width(),
+			.bottom = inner.top() + inner.height(),
+			.outerWidth = 2 * inner.left() + inner.width(),
+			.type = InfoDisplayType::Default,
+		};
+	}
+	// Center the time on the sender name or on the first text line.
+	const auto lineHeight = displayFromName()
+		? st::msgNameFont->height
+		: st::msgFont->height;
+	const auto top = inner.top()
+		+ st::msgPadding.top()
+		+ (lineHeight - st::msgDateFont->height) / 2;
+	return {
+		.right = width() - st::msgMargin.right(),
+		.bottom = top + _bottomInfo.currentSize().height(),
+		.outerWidth = width(),
+		.type = InfoDisplayType::Header,
+	};
 }
 
 bool Message::invertMedia() const {

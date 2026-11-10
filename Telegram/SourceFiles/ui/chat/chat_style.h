@@ -829,4 +829,8 @@ void FillComplexEllipse(
 	not_null<const ChatStyle*> st,
 	QRect rect);
 
+// Paints all reply and quote blocks with one background color.
+// Must be set before the first chat paint, std::nullopt keeps defaults.
+void SetQuoteBackgroundOverride(std::optional<QColor> color);
+
 } // namespace Ui

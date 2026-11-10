@@ -19,6 +19,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "data/data_story.h"
 #include "data/data_todo_list.h"
 #include "data/data_user.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_item_preview.h"
 #include "history/history.h"
 #include "history/history_item.h"
@@ -1029,9 +1030,15 @@ void Reply::paint(
 					w + 2 * x,
 					_nameTwoLines ? 2 : 1);
 
-				p.setPen(inBubble
-					? stm->historyTextFg
-					: st->msgImgReplyBarColor());
+				const auto &replyTextColor
+					= CurrentChatLayout().replyTextColor;
+				if (inBubble && replyTextColor) {
+					p.setPen(*replyTextColor);
+				} else {
+					p.setPen(inBubble
+						? stm->historyTextFg
+						: st->msgImgReplyBarColor());
+				}
 				view->prepareCustomEmojiPaint(p, context, _text);
 				auto replyToTextPalette = &(!inBubble
 					? st->imgReplyTextPalette()

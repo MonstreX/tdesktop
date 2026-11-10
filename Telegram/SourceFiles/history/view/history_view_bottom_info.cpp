@@ -22,6 +22,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "history/history_item.h"
 #include "history/history.h"
 #include "history/view/media/history_view_media.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_message.h"
 #include "history/view/history_view_cursor_state.h"
 #include "base/unixtime.h"
@@ -35,6 +36,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "window/window_session_controller.h"
 #include "styles/style_chat.h"
 #include "styles/style_credits.h"
+#include "styles/style_history_view_chat_layout.h"
 
 namespace HistoryView {
 namespace {
@@ -279,7 +281,12 @@ void BottomInfo::paint(
 
 	auto right = position.x() + width();
 	const auto firstLineBottom = position.y() + st::msgDateFont->height;
-	if (_data.flags & Data::Flag::OutLayout) {
+	const auto &layout = CurrentChatLayout();
+	const auto sendStateBeforeTime = layout.sendStateBeforeTime;
+	const auto paintSendState = [&] {
+		if (!(_data.flags & Data::Flag::OutLayout)) {
+			return;
+		}
 		const auto &icon = (_data.flags & Data::Flag::Sending)
 			? (inverted
 				? st->historySendingInvertedIcon()
@@ -291,11 +298,20 @@ void BottomInfo::paint(
 			: (inverted
 				? st->historyReceivedInvertedIcon()
 				: stm->historyReceivedIcon);
-		icon.paint(
-			p,
-			QPoint(right, firstLineBottom) + st::historySendStatePosition,
-			outer(right + st::historySendStatePosition.x(), icon));
+		auto iconPosition = QPoint(right, firstLineBottom)
+			+ st::historySendStatePosition;
+		if (sendStateBeforeTime) {
+			// The icon ends a small gap before the time text.
+			const auto skip = layout.metrics
+				? layout.metrics->sendStateSkip
+				: 0;
+			iconPosition.setX(right - skip - icon.width());
+		}
+		icon.paint(p, iconPosition, outer(iconPosition.x(), icon));
 		right -= st::historySendStateSpace;
+	};
+	if (!sendStateBeforeTime) {
+		paintSendState();
 	}
 
 	const auto authorEditedWidth = _authorEditedDate.maxWidth();
@@ -306,6 +322,10 @@ void BottomInfo::paint(
 		position.y(),
 		authorEditedWidth,
 		outerWidth);
+
+	if (sendStateBeforeTime) {
+		paintSendState();
+	}
 
 	if (_data.flags & Data::Flag::Silent) {
 		const auto &icon = inverted

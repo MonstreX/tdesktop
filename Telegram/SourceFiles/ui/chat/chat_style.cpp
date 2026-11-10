@@ -24,6 +24,8 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 namespace Ui {
 namespace {
 
+std::optional<QColor> QuoteBackgroundOverride;
+
 void EnsureCorners(
 		CornersPixmaps &corners,
 		int radius,
@@ -42,7 +44,7 @@ void EnsureBlockquoteCache(
 	}
 	cache = std::make_unique<Text::QuotePaintCache>();
 	const auto &colors = values();
-	cache->bg = colors.bg;
+	cache->bg = QuoteBackgroundOverride.value_or(colors.bg);
 	cache->outlines = colors.outlines;
 	cache->icon = colors.name;
 }
@@ -1626,6 +1628,10 @@ void FillComplexEllipse(
 	p.setPen(Qt::NoPen);
 	p.setBrush(st->msgSelectOverlay());
 	p.drawEllipse(rect);
+}
+
+void SetQuoteBackgroundOverride(std::optional<QColor> color) {
+	QuoteBackgroundOverride = color;
 }
 
 } // namespace Ui

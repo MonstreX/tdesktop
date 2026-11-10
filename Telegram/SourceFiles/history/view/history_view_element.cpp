@@ -10,6 +10,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include "apiwrap.h"
 #include "api/api_transcribes.h"
 #include "history/view/history_view_service_message.h"
+#include "history/view/history_view_chat_layout.h"
 #include "history/view/history_view_message.h"
 #include "history/view/media/history_view_community_added.h"
 #include "history/view/media/history_view_gram_transfer.h"
@@ -1608,14 +1609,15 @@ bool Element::hasCommentsButton() const {
 }
 
 int Element::skipBlockWidth() const {
-	if (hidesBottomInfo()) {
+	// With the time in the header the text keeps no room for it.
+	if (hidesBottomInfo() || CurrentChatLayout().timeInHeader) {
 		return 0;
 	}
 	return st::msgDateSpace + infoWidth() - st::msgDateDelta.x();
 }
 
 int Element::skipBlockHeight() const {
-	if (hidesBottomInfo()) {
+	if (hidesBottomInfo() || CurrentChatLayout().timeInHeader) {
 		return 0;
 	}
 	return st::msgDateFont->height - st::msgDateDelta.y();
